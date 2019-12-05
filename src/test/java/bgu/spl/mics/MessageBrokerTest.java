@@ -16,4 +16,36 @@ public class MessageBrokerTest {
         //TODO: change this test and add more tests :)
         fail("Not a good test");
     }
+
+    @Test
+    void subscribeEvent() {
+    }
+
+    @Test
+    void subscribeBroadcast() {
+    }
+
+    @Test
+    void complete() {
+    }
+
+    @Test
+    void sendBroadcast() {
+    }
+
+    @Test
+    void sendEvent() {
+    }
+
+    @Test
+    void register() {
+    }
+
+    @Test
+    void unregister() {
+    }
+
+    @Test
+    void awaitMessage() {
+    }
 }

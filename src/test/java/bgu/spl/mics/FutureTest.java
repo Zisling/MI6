@@ -15,4 +15,20 @@ public class FutureTest {
         //TODO: change this test and add more tests :)
         fail("Not a good test");
     }
+
+    @Test
+    void get() {
+    }
+
+    @Test
+    void resolve() {
+    }
+
+    @Test
+    void isDone() {
+    }
+
+    @Test
+    void testGet() {
+    }
 }
