@@ -10,13 +10,20 @@ import java.util.*;
 public class Squad {
 
 	private Map<String, Agent> agents;
-
+	private static Squad instance;
 	/**
 	 * Retrieves the single instance of this class.
 	 */
+	//Squad Constructor
+	private Squad(){}
+
 	public static Squad getInstance() {
-		//TODO: Implement this
-		return null;
+		if(instance==null)
+		{
+			instance=new Squad();
+		}
+
+		return instance;
 	}
 
 	/**
@@ -26,6 +33,7 @@ public class Squad {
 	 * 						of the squad.
 	 */
 	public void load (Agent[] inventory) {
+		if (agents==null){agents=new HashMap<>();}
 		for (Agent anAgent : inventory) {
 			agents.put(anAgent.getSerialNumber(),anAgent);
 		}
@@ -43,7 +51,7 @@ public class Squad {
 	 * @param time   milliseconds to sleep
 	 */
 	public void sendAgents(List<String> serials, int time){
-		long wait_Time=(long)time;
+	//	long wait_Time=(long)time;
 	//	Thread.currentThread().sleep(wait_Time);
 	}
 
@@ -55,7 +63,7 @@ public class Squad {
 	public boolean getAgents(List<String> serials){
 		//while wait for agent to return
 
-		return false;
+		return true;
 	}
 
     /**
@@ -65,11 +73,8 @@ public class Squad {
      */
     public List<String> getAgentsNames(List<String> serials){
     	List<String> to_Ret=new LinkedList<>();
-		Iterator<String> serials_Iter=serials.iterator();
-		to_Ret.add(agents.get(serials.get(0)).getName());
-		while (serials_Iter.hasNext())
-		{
-			to_Ret.add(agents.get(serials_Iter.next()).getName());
+		for (String serial : serials) {
+			to_Ret.add(agents.get(serial).getName());
 		}
 		return to_Ret;
     }

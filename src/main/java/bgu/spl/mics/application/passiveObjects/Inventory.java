@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -12,13 +13,20 @@ import java.util.List;
  */
 public class Inventory {
 	private List<String> gadgets;
+	private static Inventory instance;
+
+	private Inventory(){}
+
 	/**
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
-		//TODO: Implement this
-		return null;
+		if(instance==null)
+			instance=new Inventory();
+
+		return instance;
 	}
+
 
 	/**
      * Initializes the inventory. This method adds all the items given to the gadget
@@ -29,6 +37,10 @@ public class Inventory {
      */
 	public void load (String[] inventory) {
 		synchronized (this){
+			if(gadgets==null)
+			{
+				gadgets=new LinkedList<>();
+			}
 		for (String anInventory : inventory) {
 			gadgets.add(anInventory);
 		}
@@ -41,7 +53,7 @@ public class Inventory {
      * @param gadget 		Name of the gadget to check if available
      * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
      */
-	boolean getItem(String gadget){
+	public boolean getItem(String gadget){
 		synchronized (this) {
 			for (String toCheck : gadgets) {
 				if (toCheck.equals(gadget)) {
@@ -50,6 +62,7 @@ public class Inventory {
 				}
 			}
 			return false;
+
 		}
 	}
 

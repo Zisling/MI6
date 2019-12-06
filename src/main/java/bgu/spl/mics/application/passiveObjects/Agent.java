@@ -8,11 +8,23 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class Agent {
 
+
+	private String Serial_Number;
+	private String agent_Name;
+	private boolean available_flag;
+
+	//Agent Constructor
+	public Agent(String serialNumber,String agentName){
+	this.Serial_Number=serialNumber;
+	this.agent_Name=agentName;
+	this.available_flag=true;
+	}
+
 	/**
 	 * Sets the serial number of an agent.
 	 */
 	public void setSerialNumber(String serialNumber) {
-		// TODO Implement this
+		this.Serial_Number=serialNumber;
 	}
 
 	/**
@@ -21,15 +33,14 @@ public class Agent {
      * @return The serial number of an agent.
      */
 	public String getSerialNumber() {
-		// TODO Implement this
-		return null;
+		return Serial_Number;
 	}
 
 	/**
 	 * Sets the name of the agent.
 	 */
 	public void setName(String name) {
-		// TODO Implement this
+		this.agent_Name=name;
 	}
 
 	/**
@@ -38,8 +49,7 @@ public class Agent {
      * @return the name of the agent.
      */
 	public String getName() {
-		// TODO Implement this
-		return null;
+		return agent_Name;
 	}
 
 	/**
@@ -48,21 +58,20 @@ public class Agent {
      * @return if the agent is available.
      */
 	public boolean isAvailable() {
-		// TODO Implement this
-		return false;
+		return available_flag;
 	}
 
 	/**
 	 * Acquires an agent.
 	 */
 	public void acquire(){
-		// TODO Implement this
+		available_flag=false;
 	}
 
 	/**
 	 * Releases an agent.
 	 */
 	public void release(){
-		// TODO Implement this
+		available_flag=true;
 	}
 }
