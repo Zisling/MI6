@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.passiveObjects.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +31,14 @@ public class SquadTest {
             namesList1.add(agent.getName());
             namesList2.add(agent.getName());
         }
+    }
+    @AfterEach
+    public void tearDown(){
+        toTest=null;
+        serials1.clear();
+        serials2.clear();
+        namesList1.clear();
+        namesList2.clear();
     }
 
     @Test
@@ -100,7 +109,7 @@ public class SquadTest {
     void getAgents() {
         toTest.load(agentsTest2);
         assertTrue( toTest.getAgents(serials2));
-        assertTrue( toTest.getAgents(serials2));
+//        assertTrue( toTest.getAgents(serials2));
         assertFalse(toTest.getAgents(serials1));
         List<String > temp = Arrays.asList("0069", "0055");
         assertFalse(toTest.getAgents(temp));
