@@ -28,8 +28,10 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (String[] inventory) {
+		synchronized (this){
 		for (String anInventory : inventory) {
 			gadgets.add(anInventory);
+		}
 		}
 	}
 	
@@ -40,11 +42,15 @@ public class Inventory {
      * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
      */
 	boolean getItem(String gadget){
-		for (String toCheck:gadgets) {
-			if(toCheck.equals(gadget))
-				return true;
+		synchronized (this) {
+			for (String toCheck : gadgets) {
+				if (toCheck.equals(gadget)) {
+					gadgets.remove(toCheck);
+					return true;
+				}
+			}
+			return false;
 		}
-		return false;
 	}
 
 	/**

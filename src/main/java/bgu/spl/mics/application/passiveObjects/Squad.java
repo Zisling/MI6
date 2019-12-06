@@ -53,7 +53,7 @@ public class Squad {
 	 * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
 	 */
 	public boolean getAgents(List<String> serials){
-		//while
+		//while wait for agent to return
 
 		return false;
 	}
