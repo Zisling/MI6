@@ -34,8 +34,10 @@ public class SquadTest {
 
     @Test
     public void test(){
-        //TODO: change this test and add more tests :)
-        fail("Not a good test");
+        Squad toTest2=Squad.getInstance();
+        toTest2.load(agentsTest1);
+        assertEquals(toTest,toTest2);
+
     }
 
     @Test

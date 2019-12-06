@@ -13,7 +13,6 @@ public class InventoryTest {
     @BeforeEach
     public void setUp(){
         toTest=Inventory.getInstance();
-
     }
 
     @Test
