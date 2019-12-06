@@ -28,7 +28,9 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (String[] inventory) {
-		//TODO: Implement this
+		for (String anInventory : inventory) {
+			gadgets.add(anInventory);
+		}
 	}
 	
 	/**
@@ -38,8 +40,11 @@ public class Inventory {
      * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
      */
 	boolean getItem(String gadget){
-		//TODO: Implement this
-		return true;
+		for (String toCheck:gadgets) {
+			if(toCheck.equals(gadget))
+				return true;
+		}
+		return false;
 	}
 
 	/**

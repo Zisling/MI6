@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Passive data-object representing a information about an agent in MI6.
@@ -27,7 +26,9 @@ public class Squad {
 	 * 						of the squad.
 	 */
 	public void load (Agent[] inventory) {
-		// TODO Implement this
+		for (Agent anAgent : inventory) {
+			agents.put(anAgent.getSerialNumber(),anAgent);
+		}
 	}
 
 	/**
@@ -42,7 +43,8 @@ public class Squad {
 	 * @param time   milliseconds to sleep
 	 */
 	public void sendAgents(List<String> serials, int time){
-		// TODO Implement this
+		long wait_Time=(long)time;
+	//	Thread.currentThread().sleep(wait_Time);
 	}
 
 	/**
@@ -51,7 +53,8 @@ public class Squad {
 	 * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
 	 */
 	public boolean getAgents(List<String> serials){
-		// TODO Implement this
+		//while
+
 		return false;
 	}
 
@@ -61,8 +64,14 @@ public class Squad {
      * @return a list of the names of the agents with the specified serials.
      */
     public List<String> getAgentsNames(List<String> serials){
-        // TODO Implement this
-	    return null;
+    	List<String> to_Ret=new LinkedList<>();
+		Iterator<String> serials_Iter=serials.iterator();
+		to_Ret.add(agents.get(serials.get(0)).getName());
+		while (serials_Iter.hasNext())
+		{
+			to_Ret.add(agents.get(serials_Iter.next()).getName());
+		}
+		return to_Ret;
     }
 
 }
