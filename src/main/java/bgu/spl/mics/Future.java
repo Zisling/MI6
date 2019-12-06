@@ -11,12 +11,16 @@ import java.util.concurrent.TimeUnit;
  * No public constructor is allowed except for the empty constructor.
  */
 public class Future<T> {
-	
+	private T m_future_Result;
+	private boolean m_is_Resolved;
+	private final Object m_Lock;
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-		//TODO: implement this
+		m_future_Result=null;
+		m_is_Resolved=false;
+		m_Lock=new Object();
 	}
 	
 	/**
@@ -29,7 +33,20 @@ public class Future<T> {
      */
 	public T get() {
 		//TODO: implement this.
-		return null;
+		//Wait if resolved
+		try{
+			while (!m_is_Resolved){
+				synchronized (m_Lock){
+					m_Lock.wait();
+				}
+			}
+
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		return m_future_Result;
 	}
 	
 	/**
@@ -37,14 +54,16 @@ public class Future<T> {
      */
 	public void resolve (T result) {
 		//TODO: implement this.
+		m_future_Result=result;
+		m_is_Resolved=true;
+//		notifyAll();
 	}
 	
 	/**
      * @return true if this object has been resolved, false otherwise
      */
 	public boolean isDone() {
-		//TODO: implement this.
-		return false;
+		return m_is_Resolved;
 	}
 	
 	/**
