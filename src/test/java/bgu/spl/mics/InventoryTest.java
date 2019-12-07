@@ -3,14 +3,12 @@ package bgu.spl.mics;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +21,13 @@ public class InventoryTest {
     public void setUp() {
         toTest = Inventory.getInstance();
     }
+    @AfterEach
+    public void tearDown(){
+        toTest=null;
+        String[] gadgetTest1 = {"cow", "bow", "broadsword", "vodka", "hola"};
+        String[] gadgetTest2 = {"rat", "lama", "sword", "pina colda", "octupus"};
+    }
+
 
     @Test
     public void test() {
@@ -47,7 +52,6 @@ public class InventoryTest {
         for (String s : gadgetTest1) {
             assertTrue(toTest.getItem(s));
         }
-
     }
 
     @Test
@@ -71,16 +75,15 @@ public class InventoryTest {
         String[] Injson = gson.fromJson(read, String[].class);
         checkIfIn(Injson,gadgetTest1);
         checkIfIn(gadgetTest1,Injson);
-
         }
 
-    private void checkIfIn(String[] in,String[] out){
+    private void checkIfIn(String[] in,String[] toCheck){
         for (String s : in) {
             boolean stop = false;
-            for (int i = 0; i < out.length && !stop; i++) {
-                String s1 = out[i];
+            for (String s1 : toCheck) {
                 if (s.equals(s1)) {
                     stop = true;
+                    break;
                 }
             }
             if (!stop) {

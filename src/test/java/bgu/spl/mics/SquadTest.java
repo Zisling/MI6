@@ -5,7 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +22,7 @@ public class SquadTest {
             ,new Agent("001","GlaDos"),new Agent("0055","Pikachu")
             ,new Agent("0099","Jake"),new Agent("0047", "agent 47")};
     Agent[] agentsTest2={new Agent("00123","Sam Fisher"),new Agent("0069", "Solid Snake")};
+
     @BeforeEach
     public void setUp(){
         toTest=Squad.getInstance();
@@ -50,20 +51,31 @@ public class SquadTest {
     }
 
     @Test
-    void getInstance() {
-        assertEquals(toTest, Squad.getInstance());
+    void getInstance(){
+        try {
+            assertNotNull(toTest);
+            assertEquals(toTest, Squad.getInstance());
+        } catch (Exception e){
+            fail("Unexpected Exception " + e.getMessage());
+        }
     }
 
     @Test
     void load() {
+        try {
             toTest.load(agentsTest1);
-        assertTrue(toTest.getAgents(serials1));
-        List<String> names = toTest.getAgentsNames(serials1);
-        for (String name : names) {
-                assertTrue(namesList1.contains(name));
-//                remove name to test if there any duplicate in List names
-            namesList1.remove(name);
-        }
+        } catch (Exception e){fail("Unexpected Exception (didn't load)" + e.getMessage());}
+    }
+
+    @Test
+    void getAgents() {
+        toTest.load(agentsTest2);
+        List<String > temp = Arrays.asList("0069", "0055");
+        try {
+            assertTrue( toTest.getAgents(serials2));
+            assertFalse(toTest.getAgents(serials1));
+            assertFalse(toTest.getAgents(temp));}
+        catch (Exception e){fail("Unexpected Exception (didn't get)" + e.getMessage());}
     }
 
     @Test
@@ -74,45 +86,34 @@ public class SquadTest {
 //        check if in mission
         assertFalse(agentsTest2[0].isAvailable());
         assertFalse(agentsTest2[1].isAvailable());
-        toTest.releaseAgents(serials2);
+        try {toTest.releaseAgents(serials2);
 //        check if there release
         assertTrue(agentsTest2[0].isAvailable());
         assertTrue(agentsTest2[1].isAvailable());
+        }catch (Exception e){fail("Unexpected Exception (didn't release Agents)" + e.getMessage());}
         serials2.remove("0069");
         toTest.getAgents(serials2);
 //        check if Sam Fisher is in mission
         assertFalse(agentsTest2[0].isAvailable());
         assertTrue(agentsTest2[1].isAvailable());
-        toTest.releaseAgents(serials2);
+        try {
+            toTest.releaseAgents(serials2);
+        }catch (Exception e){fail("Unexpected Exception (didn't release Agent Sam Fisher 1)" + e.getMessage());}
         assertTrue(agentsTest2[0].isAvailable());
         serials2.add("0069");
         toTest.getAgents(serials2);
         serials2.remove("00123");
-        toTest.releaseAgents(serials2);
+        try{toTest.releaseAgents(serials2);}catch (Exception e){fail("Unexpected Exception (didn't release Agent Solid Snake 2)" + e.getMessage());}
         //        one is aborted
-        assertTrue(agentsTest2[0].isAvailable());
-        assertFalse(agentsTest2[1].isAvailable());
+        assertFalse(agentsTest2[0].isAvailable());
+        assertTrue(agentsTest2[1].isAvailable());
     }
 
     @Test
-    void sendAgents() throws InterruptedException {
+    void sendAgents() {
         toTest.load(agentsTest2);
+        assertTimeout(Duration.ofMillis(125), ()->{toTest.sendAgents(serials2, 100);});
         assertTrue(agentsTest2[0].isAvailable());
-        long testTime = System.currentTimeMillis();
-        toTest.sendAgents(serials2, 100);
-//        assert the different above 10 millis sec
-        assertEquals(10, (System.currentTimeMillis()-testTime)/10);
-        assertTrue(agentsTest2[0].isAvailable());
-    }
-
-    @Test
-    void getAgents() {
-        toTest.load(agentsTest2);
-        assertTrue( toTest.getAgents(serials2));
-//        assertTrue( toTest.getAgents(serials2));
-        assertFalse(toTest.getAgents(serials1));
-        List<String > temp = Arrays.asList("0069", "0055");
-        assertFalse(toTest.getAgents(temp));
     }
 
     @Test
