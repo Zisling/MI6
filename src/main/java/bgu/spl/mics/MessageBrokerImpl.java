@@ -6,13 +6,13 @@ package bgu.spl.mics;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBrokerImpl implements MessageBroker {
-
+	static MessageBroker instance;
 	/**
 	 * Retrieves the single instance of this class.
 	 */
 	public static MessageBroker getInstance() {
-		//TODO: Implement this
-		return null;
+		if (instance==null){instance=new MessageBrokerImpl();}
+		return instance;
 	}
 
 	@Override
