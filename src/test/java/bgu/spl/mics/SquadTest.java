@@ -18,23 +18,29 @@ public class SquadTest {
     List<String> serials2 = new LinkedList<>();
     List<String> namesList1 = new LinkedList<>();
     List<String> namesList2 = new LinkedList<>();
-    Agent[] agentsTest1={new Agent("007","James Bond"),new Agent("006","Ali Cohen")
-            ,new Agent("001","GlaDos"),new Agent("0055","Pikachu")
-            ,new Agent("0099","Jake"),new Agent("0047", "agent 47")};
-    Agent[] agentsTest2={new Agent("00123","Sam Fisher"),new Agent("0069", "Solid Snake")};
+    Agent[] agentsTest1;
+    Agent[] agentsTest2;
 
     @BeforeEach
     public void setUp(){
         toTest=Squad.getInstance();
+        agentsTest1= new Agent[]{new Agent("007", "James Bond"), new Agent("006", "Ali Cohen")
+                , new Agent("001", "GlaDos"), new Agent("0055", "Pikachu")
+                , new Agent("0099", "Jake"), new Agent("0047", "agent 47")};
+        agentsTest2= new Agent[]{new Agent("00123", "Sam Fisher"), new Agent("0069", "Solid Snake")};
         for (Agent agent : agentsTest1) {
             serials1.add(agent.getSerialNumber());
-            serials2.add(agent.getSerialNumber());
             namesList1.add(agent.getName());
+        }
+        for (Agent agent : agentsTest2) {
+            serials2.add(agent.getSerialNumber());
             namesList2.add(agent.getName());
         }
     }
     @AfterEach
     public void tearDown(){
+        Arrays.fill(agentsTest1, null);
+        Arrays.fill(agentsTest2, null);
         toTest=null;
         serials1.clear();
         serials2.clear();
@@ -45,7 +51,7 @@ public class SquadTest {
     @Test
     public void test(){
         Squad toTest2=Squad.getInstance();
-        toTest2.load(agentsTest1);
+        toTest2.load(agentsTest2);
         assertEquals(toTest,toTest2);
 
     }
@@ -118,12 +124,12 @@ public class SquadTest {
 
     @Test
     void getAgentsNames() {
-        toTest.load(agentsTest1);
-        List<String > names = toTest.getAgentsNames(serials1);
-        for (String s : namesList1) {
+        toTest.load(agentsTest2);
+        List<String > names = toTest.getAgentsNames(serials2);
+        for (String s : namesList2) {
             assertTrue(names.contains(s));
         }
-        assertFalse(names.contains("Sam Fisher"));
+        assertFalse(names.contains("James Bond"));
         assertFalse(names.contains("Sterling Malory Archer"));
     }
 }
