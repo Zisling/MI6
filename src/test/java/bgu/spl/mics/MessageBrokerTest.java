@@ -14,14 +14,12 @@ public class MessageBrokerTest {
     MessageBroker toTest;
     Subscriber testSub1;
     Subscriber testSub2;
-    Event<String> testEvent;
 
     @BeforeEach
     public void setUp(){
         toTest = MessageBrokerImpl.getInstance();
         testSub1 =new ExampleBroadcastSubscriber("Agent 47", new String[]{"1"});
         testSub2= new ExampleEventHandlerSubscriber("diana", new String[] {"2"});
-        testEvent = new ExampleEvent("Agent 47");
     }
 
     @AfterEach
@@ -66,6 +64,9 @@ public class MessageBrokerTest {
 
     @Test
     void subscribeBroadcast() {
+        try {
+            toTest.subscribeBroadcast(ExampleBroadcast.class,testSub2);
+        }catch (Exception e){fail("unexcited EXCEPTION "+e.getMessage());}
     }
 
     @Test
@@ -76,11 +77,15 @@ public class MessageBrokerTest {
     }
 
     @Test
-    void complete() {
+    void sendEvent() {
+        try {
+        toTest.sendEvent(new ExampleEvent("Agent 47"));
+        } catch (Exception e){fail("unexcited EXCEPTION "+e.getMessage());}
     }
 
     @Test
-    void sendEvent() {
+    void complete(){
+
     }
 
     @Test
