@@ -72,7 +72,7 @@ public class InventoryTest {
         toTest.load(gadgetTest1);
         toTest.printToFile("test_Inventory_printToFile");
         Gson gson = new Gson();
-        JsonReader read = new JsonReader(new FileReader("test.json"));
+        JsonReader read = new JsonReader(new FileReader("test_Inventory_printToFile.json"));
         String[] InJson = gson.fromJson(read, String[].class);
         checkIfIn(InJson,gadgetTest1);
         checkIfIn(gadgetTest1,InJson);
