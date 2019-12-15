@@ -70,12 +70,9 @@ public class Diary {
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){
-		Map<String ,Object> toFile= new HashMap<>();
 			try (Writer writer = new FileWriter(filename+".json")) {
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
-				toFile.put("Reports", reports);
-				toFile.put("total", total);
-				gson.toJson(toFile, writer);
+				gson.toJson(this, writer);
 			}catch (IOException e) {
 				e.printStackTrace();
 			}
