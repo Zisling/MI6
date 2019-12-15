@@ -2,13 +2,17 @@ package bgu.spl.mics.application.passiveObjects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -66,9 +70,12 @@ public class Diary {
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){
+		Map<String ,Object> toFile= new HashMap<>();
 			try (Writer writer = new FileWriter(filename+".json")) {
-				Gson gson = new GsonBuilder().create();
-				gson.toJson(total, writer);
+				Gson gson = new GsonBuilder().setPrettyPrinting().create();
+				toFile.put("Reports", reports);
+				toFile.put("total", total);
+				gson.toJson(toFile, writer);
 			}catch (IOException e) {
 				e.printStackTrace();
 			}
