@@ -77,6 +77,6 @@ class DiaryTest {
         t1.start();
         t2.start();
         toTest.addReport(r2);
-        toTest.printToFile("test");
+        toTest.printToFile("test_printToFile_Diary");
     }
 }
