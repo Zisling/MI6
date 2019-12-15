@@ -70,7 +70,7 @@ public class InventoryTest {
     @Test
     void printToFile() throws IOException {
         toTest.load(gadgetTest1);
-        toTest.printToFile("test");
+        toTest.printToFile("test_Inventory_printToFile");
         Gson gson = new Gson();
         JsonReader read = new JsonReader(new FileReader("test.json"));
         String[] InJson = gson.fromJson(read, String[].class);
