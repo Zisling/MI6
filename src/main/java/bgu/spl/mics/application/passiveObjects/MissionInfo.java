@@ -17,9 +17,6 @@ public class MissionInfo {
 	private int timeExpired;
 	private int duration;
 // constructor that i added
-	public MissionInfo() {
-	}
-
 	public MissionInfo(String missionName, List<String> serialAgentsNumbers, String gadget, int timeIssued, int timeExpired, int duration) {
 		this.missionName = missionName;
 		this.serialAgentsNumbers = serialAgentsNumbers;
