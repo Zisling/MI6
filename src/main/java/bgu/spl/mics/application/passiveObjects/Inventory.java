@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class Inventory {
      */
 	public static Inventory getInstance() {
 		if(instance==null)
-			instance=new Inventory();
-
+			synchronized (Inventory.class){
+			if (instance==null){instance=new Inventory();}}
 		return instance;
 	}
 
@@ -41,9 +42,7 @@ public class Inventory {
 			{
 				gadgets=new LinkedList<>();
 			}
-		for (String anInventory : inventory) {
-			gadgets.add(anInventory);
-		}
+			gadgets.addAll(Arrays.asList(inventory));
 		}
 	}
 	
