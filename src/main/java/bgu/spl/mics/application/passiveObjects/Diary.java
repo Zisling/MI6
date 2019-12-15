@@ -1,6 +1,17 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Passive object representing the diary where all reports are stored.
@@ -11,16 +22,27 @@ import java.util.List;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class Diary {
+	private static Diary instance;
+	private final List<Report> reports;
+	private AtomicInteger total;
+
+	private Diary() {
+		reports= new LinkedList<Report>();
+		total= new AtomicInteger(0);
+	}
+
 	/**
 	 * Retrieves the single instance of this class.
 	 */
 	public static Diary getInstance() {
-		//TODO: Implement this
-		return null;
+		if (instance==null){
+			synchronized (Diary.class){
+			if (instance==null){instance=new Diary();}}}
+		return instance;
 	}
 
 	public List<Report> getReports() {
-		return null;
+		return reports;
 	}
 
 	/**
@@ -28,7 +50,12 @@ public class Diary {
 	 * @param reportToAdd - the report to add
 	 */
 	public void addReport(Report reportToAdd){
-		//TODO: Implement this
+		int val;
+		do {
+			val = total.get();
+		}while (!total.compareAndSet(val,val+1));
+		synchronized (reports){
+		reports.add(reportToAdd);}
 	}
 
 	/**
@@ -39,7 +66,12 @@ public class Diary {
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){
-		//TODO: Implement this
+			try (Writer writer = new FileWriter(filename+".json")) {
+				Gson gson = new GsonBuilder().create();
+				gson.toJson(total, writer);
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 	/**
@@ -47,7 +79,6 @@ public class Diary {
 	 * @return the total number of received missions (executed / aborted) be all the M-instances.
 	 */
 	public int getTotal(){
-		//TODO: Implement this
-		return 0;
+		return total.get();
 	}
 }
