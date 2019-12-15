@@ -1,5 +1,11 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +79,11 @@ public class Inventory {
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){
-		//TODO: Implement this
+		try (Writer writer = new FileWriter(filename+".json")) {
+			Gson gson = new GsonBuilder().create();
+			gson.toJson(gadgets, writer);
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

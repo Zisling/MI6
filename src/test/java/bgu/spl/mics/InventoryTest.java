@@ -69,12 +69,13 @@ public class InventoryTest {
 
     @Test
     void printToFile() throws IOException {
-        toTest.printToFile("test.json");
+        toTest.load(gadgetTest1);
+        toTest.printToFile("test");
         Gson gson = new Gson();
         JsonReader read = new JsonReader(new FileReader("test.json"));
-        String[] Injson = gson.fromJson(read, String[].class);
-        checkIfIn(Injson,gadgetTest1);
-        checkIfIn(gadgetTest1,Injson);
+        String[] InJson = gson.fromJson(read, String[].class);
+        checkIfIn(InJson,gadgetTest1);
+        checkIfIn(gadgetTest1,InJson);
         }
 
     private void checkIfIn(String[] in,String[] toCheck){
