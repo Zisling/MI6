@@ -15,6 +15,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	private ConcurrentHashMap<Class<? extends Event<?>>, ConcurrentLinkedQueue<Subscriber>> eventMap;
 	private ConcurrentHashMap<Class<? extends Broadcast>, ConcurrentLinkedQueue<Subscriber>> broadcastMap;
 	private ConcurrentHashMap<Subscriber,ConcurrentLinkedQueue<Message>> subMap;
+	private ConcurrentHashMap<Subscriber,ConcurrentLinkedQueue<Class<? extends Message>>> subRegisterMap;
 
 
 //	constructor
@@ -36,14 +37,12 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, Subscriber m) {
-		// TODO Auto-generated method stub
-
+		eventMap.get(type).add(m);
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, Subscriber m) {
-		// TODO Auto-generated method stub
-
+		broadcastMap.get(type).add(m);
 	}
 
 	@Override
@@ -72,6 +71,10 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public void unregister(Subscriber m) {
+		for (Class<? extends Message> aClass : subRegisterMap.get(m)) {
+			eventMap.get(aClass).remove(m);
+			broadcastMap.get(aClass).remove(m);
+		}
 		subMap.remove(m);
 	}
 
