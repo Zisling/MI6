@@ -52,6 +52,11 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
+		Subscriber temp = broadcastMap.get(b.getClass()).poll();
+		if (temp!=null){
+		subMap.get(temp).add(b);}
+		broadcastMap.get(b.getClass()).add(temp);
+
 		// TODO Auto-generated method stub
 
 	}
