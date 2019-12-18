@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import java.util.HashMap;
+
 /**
  * The Subscriber is an abstract class that any subscriber in the system
  * must extend. The abstract Subscriber class is responsible to get and
@@ -17,6 +19,8 @@ package bgu.spl.mics;
  */
 public abstract class Subscriber extends RunnableSubPub {
     private boolean terminated = false;
+    MessageBroker myBroker;
+    private HashMap<Class<? extends Message>,Callback> callBackMap;
 
     /**
      * @param name the Subscriber name (used mainly for debugging purposes -
@@ -24,6 +28,8 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     public Subscriber(String name) {
         super(name);
+        callBackMap = new HashMap<>();
+        myBroker= MessageBrokerImpl.getInstance();
     }
 
     /**
@@ -48,7 +54,8 @@ public abstract class Subscriber extends RunnableSubPub {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        //TODO: implement this.
+        callBackMap.put(type, callback);
+        MessageBrokerImpl.getInstance().subscribeEvent(type, this);
     }
 
     /**
@@ -72,7 +79,8 @@ public abstract class Subscriber extends RunnableSubPub {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-        //TODO: implement this.
+        callBackMap.put(type, callback);
+        myBroker.subscribeBroadcast(type, this);
     }
 
     /**
@@ -86,7 +94,7 @@ public abstract class Subscriber extends RunnableSubPub {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-        //TODO: implement this.
+        MessageBrokerImpl.getInstance().complete(e, result);
     }
 
     /**
@@ -105,7 +113,14 @@ public abstract class Subscriber extends RunnableSubPub {
     public final void run() {
         initialize();
         while (!terminated) {
-            System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
+            try {
+                Message toCallback =myBroker.awaitMessage(this);
+                if (toCallback!=null){
+                    callBackMap.get(toCallback.getClass()).call(toCallback);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
