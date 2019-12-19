@@ -4,6 +4,8 @@ package bgu.spl.mics;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import bgu.spl.mics.application.Broadcasts.Terminating;
+import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.*;
 
 /**
@@ -26,9 +28,12 @@ public class MessageBrokerImpl implements MessageBroker {
 		subMap = new ConcurrentHashMap<>();
 		futureMessageMap=new ConcurrentHashMap<>();
 
+		broadcastMap.put(TickBroadcast.class,new ConcurrentLinkedQueue<>());
+		broadcastMap.put(Terminating.class,new ConcurrentLinkedQueue<>());
 		eventMap.put(AgentAvailableEvent.class,new ConcurrentLinkedQueue<>());
 		eventMap.put(MissionReceviedEvent.class,new ConcurrentLinkedQueue<>());
 		eventMap.put(GadgetAvailableEvent.class,new ConcurrentLinkedQueue<>());
+		eventMap.put(ReadyEvent.class,new ConcurrentLinkedQueue<>());
 	}
 
 	/**
@@ -48,14 +53,20 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, Subscriber m) {
-		broadcastMap.get(type).add(m);
+			broadcastMap.get(type).add(m);
 	}
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
-		// TODO Auto-generated method stub
-		Future futureToResolve=futureMessageMap.remove(e);
-		futureToResolve.resolve(result);
+		Future futureToResolve=futureMessageMap.get(e);
+		System.out.println(result.getClass());
+		if (futureToResolve!=null){
+			futureToResolve.resolve(result);
+			System.out.println(futureToResolve.isDone());
+		}else {
+			System.out.println("Resolve is null");
+		}
+		futureMessageMap.remove(e);
 	}
 
 	@Override
@@ -84,22 +95,30 @@ public class MessageBrokerImpl implements MessageBroker {
 		// TODO Auto-generated method stub
 		Future<T> futureOut=null;
 		ConcurrentLinkedQueue<Subscriber> roundRobinQ=eventMap.get(e.getClass());
-		Subscriber currSub=roundRobinQ.poll();
-
-		if(currSub!=null) {
-			if (subMap.containsKey(currSub)){
-				subMap.get(currSub).add(e);
-				currSub.notify();
-				roundRobinQ.add(currSub);
-				futureOut=new Future<>();
-				futureMessageMap.put(e,futureOut);//Adding the future object associated to the event to the hash map
-			}
+		if (!roundRobinQ.isEmpty()){
+			Subscriber currSub=null;
+			currSub=roundRobinQ.poll();
+			roundRobinQ.add(currSub);
+			if(currSub!=null) {
+			try {
+				if (subMap.containsKey(currSub)){
+					subMap.get(currSub).add(e);
+					currSub.notify();
+					futureOut=new Future<>();
+					if (futureOut==null){
+						System.out.println("wtf");
+					}
+					futureMessageMap.put(e,futureOut);//Adding the future object associated to the event to the hash map
+				}
+			}catch (Exception m){m.getMessage();}
 		}
 		else{
 //			*temp line
 			System.out.println("currSub is null");
 		}
-
+		}
+		if (futureOut==null)
+		System.out.println("send a futureOut null");
 		return futureOut;
 	}
 

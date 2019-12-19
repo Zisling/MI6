@@ -16,7 +16,9 @@ public class Squad {
 	 * Retrieves the single instance of this class.
 	 */
 	//Squad Constructor
-	private Squad(){}
+	private Squad(){
+		agents = new HashMap<>();
+	}
 
 	public static Squad getInstance() {
 		if(instance==null)

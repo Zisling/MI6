@@ -18,20 +18,20 @@ import java.util.TimerTask;
  */
 public class TimeService extends Publisher {
 
-	private int duration;
-	private int speed=100;
 	private int time;
+	private int speed=100;
+	private int timeTick;
 	private Timer clock;
 	public TimeService() {
 		super("Clock");
-		time=0;
-		duration = 1000;
+		timeTick =0;
+		time = 1000;
 	}
 
-	public TimeService(int duration) {
+	public TimeService(int time) {
 		super("Clock");
-		time=0;
-		this.duration = duration;
+		timeTick =0;
+		this.time = time;
 	}
 
 	@Override
@@ -40,9 +40,9 @@ public class TimeService extends Publisher {
 		clock.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				time++;
-				if (time<duration){
-					getSimplePublisher().sendBroadcast(new TickBroadcast(time));
+				timeTick++;
+				if (timeTick <time){
+					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 				}
 				else {
 					getSimplePublisher().sendBroadcast(new Terminating());

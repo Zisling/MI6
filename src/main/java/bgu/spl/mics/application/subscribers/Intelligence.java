@@ -43,7 +43,8 @@ public class Intelligence extends Subscriber {
 					if (MissionMap.containsKey(c.getTimeTick())){
 						 a=getSimplePublisher().sendEvent(new MissionReceviedEvent(MissionMap.get(c.getTimeTick()).getMissionName(),MissionMap.get(c.getTimeTick())));
 						 countTear--;
-						 if (countTear==0){terminate();}
+						 if (countTear==0){terminate();
+						 }
 					}
 				}
 			}

@@ -70,6 +70,7 @@ public class M extends Subscriber {
 				Future<List<String >> AgentsNames= null;
 				if (c!=null){
 					MissionInfo mission = c.getMission();
+					complete(c, c.getMission());
 					MoneyPennyId=getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
 					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1){
 						QTimeTick=getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
