@@ -111,6 +111,7 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     @Override
     public final void run() {
+        myBroker.register(this);
         initialize();
         while (!terminated) {
             try {
@@ -122,6 +123,7 @@ public abstract class Subscriber extends RunnableSubPub {
                 e.printStackTrace();
             }
         }
+        myBroker.unregister(this);
     }
 
 }
