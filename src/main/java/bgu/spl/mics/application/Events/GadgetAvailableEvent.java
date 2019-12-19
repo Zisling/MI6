@@ -2,7 +2,7 @@ package bgu.spl.mics.application.Events;
 
 import bgu.spl.mics.Event;
 
-public class GadgetAvailableEvent implements Event<Boolean> {
+public class GadgetAvailableEvent implements Event<Integer> {
     private String gadget;
     public GadgetAvailableEvent(String gadget){
         this.gadget=gadget;

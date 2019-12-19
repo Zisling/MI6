@@ -65,7 +65,7 @@ public class Squad {
 	 */
 	public boolean getAgents(List<String> serials){
 		//while wait for agent to return
-
+//		TODO
 		return true;
 	}
 
