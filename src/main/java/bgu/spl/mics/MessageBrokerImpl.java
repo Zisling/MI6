@@ -69,10 +69,16 @@ public class MessageBrokerImpl implements MessageBroker {
 		Subscriber currSub=roundRobinQ.poll();
 
 		if(currSub!=null) {
-			subMap.get(currSub).add(e);
-			currSub.notify();
-			roundRobinQ.add(currSub);
-			futureOut=new Future<>();
+			if (subMap.containsKey(currSub)){
+				subMap.get(currSub).add(e);
+				currSub.notify();
+				roundRobinQ.add(currSub);
+				futureOut=new Future<>();
+			}
+		}
+		else{
+//			*temp line
+			System.out.println("currSub is null");
 		}
 
 		return futureOut;
