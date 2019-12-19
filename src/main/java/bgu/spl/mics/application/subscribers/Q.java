@@ -1,6 +1,11 @@
 package bgu.spl.mics.application.subscribers;
 
+import bgu.spl.mics.Callback;
 import bgu.spl.mics.Subscriber;
+import bgu.spl.mics.application.Broadcasts.Terminating;
+import bgu.spl.mics.application.Broadcasts.TickBroadcast;
+import bgu.spl.mics.application.Events.GadgetAvailableEvent;
+import bgu.spl.mics.application.passiveObjects.Inventory;
 
 /**
  * Q is the only Subscriber\Publisher that has access to the {@link bgu.spl.mics.application.passiveObjects.Inventory}.
@@ -9,15 +14,43 @@ import bgu.spl.mics.Subscriber;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Q extends Subscriber {
-
-	public Q() {
-		super("Change_This_Name");
-		// TODO Implement this
+	Inventory myInventory;
+	int tick;
+	public Q(String name) {
+		super(name);
+		myInventory=Inventory.getInstance();
+		tick=0;
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+		subscribeBroadcast(Terminating.class, new Callback<Terminating>() {
+			@Override
+			public void call(Terminating c) {
+				terminate();
+			}
+		});
+		subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
+			@Override
+			public void call(TickBroadcast c) {
+				if (c!=null){
+					tick=c.getTimeTick();
+				}
+			}
+		});
+		subscribeEvent(GadgetAvailableEvent.class, new Callback<GadgetAvailableEvent>() {
+			@Override
+			public void call(GadgetAvailableEvent c) {
+				int receiveTime =tick;
+				if (myInventory.getItem(c.getGadget())) {
+					complete(c, receiveTime);
+				}
+				else {
+					complete(c, -1);
+				}
+			}
+		});
+
 		
 	}
 

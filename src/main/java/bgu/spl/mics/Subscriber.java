@@ -102,6 +102,7 @@ public abstract class Subscriber extends RunnableSubPub {
      * message.
      */
     protected final void terminate() {
+        myBroker.unregister(this);
         this.terminated = true;
     }
 
@@ -123,7 +124,6 @@ public abstract class Subscriber extends RunnableSubPub {
                 e.printStackTrace();
             }
         }
-        myBroker.unregister(this);
     }
 
 }
