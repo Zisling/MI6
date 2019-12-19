@@ -32,8 +32,7 @@ public class Future<T> {
      * 	       
      */
 	public T get() {
-		//TODO: implement this.
-		//Wait if resolved
+		//Wait if not resolved
 		try{
 			while (!m_is_Resolved){
 				synchronized (m_Lock){
@@ -53,10 +52,13 @@ public class Future<T> {
      * Resolves the result of this Future object.
      */
 	public void resolve (T result) {
-		//TODO: implement this.
 		m_future_Result=result;
 		m_is_Resolved=true;
-//		notifyAll();
+
+		synchronized (m_Lock)
+		{
+			m_Lock.notifyAll();
+		}
 	}
 	
 	/**
@@ -78,8 +80,21 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit) {
-		//TODO: implement this.
-		return null;
+		if(!m_is_Resolved)
+		{
+			try
+			{
+				synchronized (m_Lock)
+				{
+					m_Lock.wait(unit.convert(timeout,TimeUnit.MILLISECONDS));
+				}
+			}
+			catch (InterruptedException e)
+			{
+				System.out.println(e.getMessage());
+			}
+		}
+		return m_future_Result;
 	}
 
 }
