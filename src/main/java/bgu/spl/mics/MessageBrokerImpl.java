@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
-import java.util.HashMap;
-import java.util.Queue;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -65,11 +64,23 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		// TODO Auto-generated method stub
-		return null;
+		Future<T> futureOut=null;
+		ConcurrentLinkedQueue<Subscriber> roundRobinQ=eventMap.get(e.getClass());
+		Subscriber currSub=roundRobinQ.poll();
+
+		if(currSub!=null) {
+			subMap.get(currSub).add(e);
+			currSub.notify();
+			roundRobinQ.add(currSub);
+			futureOut=new Future<>();
+		}
+
+		return futureOut;
 	}
 
 	@Override
 	public void register(Subscriber m) {
+		if(!subMap.containsKey(m))
 		subMap.put(m, new ConcurrentLinkedQueue<>());
 	}
 
@@ -81,7 +92,16 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public Message awaitMessage(Subscriber m) throws InterruptedException {
 		// TODO Auto-generated method stub
-		return null;
+		ConcurrentLinkedQueue<Message> subMessagelist=subMap.get(m);
+		if(subMessagelist.isEmpty())
+		{
+			synchronized (m)
+			{
+				m.wait();
+			}
+		}
+
+		return subMessagelist.poll();
 	}
 
 	
