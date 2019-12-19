@@ -4,6 +4,8 @@ package bgu.spl.mics;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import bgu.spl.mics.application.Events.*;
+
 /**
  * The {@link MessageBrokerImpl class is the implementation of the MessageBroker interface.
  * Write your implementation here!
@@ -14,6 +16,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	private ConcurrentHashMap<Class<? extends Event<?>>, ConcurrentLinkedQueue<Subscriber>> eventMap;
 	private ConcurrentHashMap<Class<? extends Broadcast>, ConcurrentLinkedQueue<Subscriber>> broadcastMap;
 	private ConcurrentHashMap<Subscriber,ConcurrentLinkedQueue<Message>> subMap;
+	private ConcurrentHashMap<Event<?>,Future<?>> futureMessageMap;
 
 
 //	constructor
@@ -21,6 +24,11 @@ public class MessageBrokerImpl implements MessageBroker {
 		eventMap = new ConcurrentHashMap<>();
 		broadcastMap = new ConcurrentHashMap<>();
 		subMap = new ConcurrentHashMap<>();
+		futureMessageMap=new ConcurrentHashMap<>();
+
+		eventMap.put(AgentAvailableEvent.class,new ConcurrentLinkedQueue<>());
+		eventMap.put(MissionReceviedEvent.class,new ConcurrentLinkedQueue<>());
+		eventMap.put(GadgetAvailableEvent.class,new ConcurrentLinkedQueue<>());
 	}
 
 	/**
@@ -46,15 +54,25 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> void complete(Event<T> e, T result) {
 		// TODO Auto-generated method stub
-
+		Future<?> futureToResolve=futureMessageMap.remove(e);
+		futureToResolve.resolve(result);
 	}
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		Subscriber temp = broadcastMap.get(b.getClass()).poll();
-		if (temp!=null){
-		subMap.get(temp).add(b);}
-		broadcastMap.get(b.getClass()).add(temp);
+		ConcurrentLinkedQueue<Subscriber> bSubscribers = broadcastMap.get(b.getClass());
+		for (Subscriber sub:bSubscribers) {
+			if(subMap.containsKey(sub))
+			{
+				synchronized (subMap.get(sub)) {
+					subMap.get(sub).add(b);
+				}
+			}
+			synchronized (sub)
+			{
+				sub.notify();
+			}
+		}
 
 		// TODO Auto-generated method stub
 
@@ -74,6 +92,7 @@ public class MessageBrokerImpl implements MessageBroker {
 				currSub.notify();
 				roundRobinQ.add(currSub);
 				futureOut=new Future<>();
+				futureMessageMap.put(e,futureOut);//Adding the future object associated to the event to the hash map
 			}
 		}
 		else{
@@ -92,7 +111,19 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public void unregister(Subscriber m) {
-		subMap.remove(m);
+		if(subMap.containsKey(m)) {
+			unSubscribeFromEvents(AgentAvailableEvent.class, m);
+			unSubscribeFromEvents(GadgetAvailableEvent.class, m);
+			unSubscribeFromEvents(MissionReceviedEvent.class, m);
+			subMap.remove(m);
+		}
+	}
+
+	private void unSubscribeFromEvents(Class eventClass,Subscriber subToUnregister)
+	{
+		synchronized (eventMap.get(eventClass)){
+			eventMap.get(eventClass).remove(subToUnregister);
+		}
 	}
 
 	@Override
