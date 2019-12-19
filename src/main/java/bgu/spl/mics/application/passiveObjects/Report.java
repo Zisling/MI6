@@ -18,18 +18,6 @@ public class Report {
 	private int timeIssued;
 	private int QTime;
 	private int timeCreated;
-//	constrictor
-	public Report(String missionName, int mId, int moneyPennyId, List<String> agentsSerialNumbers, List<String> agentsNames, String gadgetName, int timeIssued, int QTime, int timeCreated) {
-		this.missionName = missionName;
-		this.mId = mId;
-		this.moneyPennyId = moneyPennyId;
-		this.agentsSerialNumbers = agentsSerialNumbers;
-		this.agentsNames = agentsNames;
-		this.gadgetName = gadgetName;
-		this.timeIssued = timeIssued;
-		this.QTime = QTime;
-		this.timeCreated = timeCreated;
-	}
 
 	/**
      * Retrieves the mission name.

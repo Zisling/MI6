@@ -46,10 +46,6 @@ public class Diary {
 	 * @param reportToAdd - the report to add
 	 */
 	public void addReport(Report reportToAdd){
-		int val;
-		do {
-			val = total.get();
-		}while (!total.compareAndSet(val,val+1));
 		synchronized (reports){
 		reports.add(reportToAdd);}
 	}
@@ -76,5 +72,16 @@ public class Diary {
 	 */
 	public int getTotal(){
 		return total.get();
+	}
+
+
+	/**
+	 * Increments the total number of received missions by 1
+	 */
+	public void incrementTotal(){
+		int val;
+		do {
+			val = total.get();
+		}while (!total.compareAndSet(val,val+1));
 	}
 }
