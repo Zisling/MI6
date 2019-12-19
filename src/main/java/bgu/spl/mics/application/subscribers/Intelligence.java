@@ -34,12 +34,7 @@ public class Intelligence extends Subscriber {
 
 	@Override
 	protected void initialize() {
-		subscribeBroadcast(Terminating.class, new Callback<Terminating>() {
-			@Override
-			public void call(Terminating c) {
-				terminate();
-			}
-		});
+
 		subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
 			@Override
 			public void call(TickBroadcast c) {

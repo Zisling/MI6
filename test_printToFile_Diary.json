@@ -1,50 +1,8 @@
 {
   "reports": [
-    {
-      "missionName": "addME2",
-      "mId": 5,
-      "moneyPennyId": 5,
-      "agentsSerialNumbers": [
-        "008"
-      ],
-      "agentsNames": [
-        "Bond"
-      ],
-      "gadgetName": "gadgad",
-      "timeIssued": 5,
-      "QTime": 6,
-      "timeCreated": 7
-    },
-    {
-      "missionName": "addME1",
-      "mId": 5,
-      "moneyPennyId": 5,
-      "agentsSerialNumbers": [
-        "007"
-      ],
-      "agentsNames": [
-        "James Bond"
-      ],
-      "gadgetName": "gad",
-      "timeIssued": 5,
-      "QTime": 6,
-      "timeCreated": 7
-    },
-    {
-      "missionName": "addME2",
-      "mId": 5,
-      "moneyPennyId": 5,
-      "agentsSerialNumbers": [
-        "008"
-      ],
-      "agentsNames": [
-        "Bond"
-      ],
-      "gadgetName": "gadgad",
-      "timeIssued": 5,
-      "QTime": 6,
-      "timeCreated": 7
-    }
+    null,
+    null,
+    null
   ],
-  "total": 3
+  "total": 0
 }

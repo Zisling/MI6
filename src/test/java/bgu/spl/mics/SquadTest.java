@@ -132,4 +132,32 @@ public class SquadTest {
         assertFalse(names.contains("James Bond"));
         assertFalse(names.contains("Sterling Malory Archer"));
     }
+
+    @Test
+    void myTest() throws InterruptedException {
+        toTest.load(agentsTest1);
+        Thread t1 = new Thread(){
+            @Override
+            public void run() {
+                List<String > a=new LinkedList<>();
+                a.add("007");
+                a.add("006");
+                if (toTest.getAgents(a)){
+                    toTest.sendAgents(a,1);}
+            }
+        };
+        Thread t2 = new Thread(){
+            @Override
+            public void run() {
+                List<String > a=new LinkedList<>();
+                a.add("007");
+                a.add("006");
+                if (toTest.getAgents(a)){
+                toTest.sendAgents(a,1);
+                }
+            }
+        };
+        t1.start();
+        t2.start();
+    }
 }

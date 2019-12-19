@@ -29,8 +29,8 @@ class DiaryTest {
         agentsSerial2.add("008");
         agentsName.add("James Bond");
         agentsName2.add("Bond");
-        r1=new Report("addME1",5,5,agentsSerial,agentsName,"gad",5,6,7);
-        r2=new Report("addME2",5,5,agentsSerial2,agentsName2,"gadgad",5,6,7);
+//        r1=new Report("addME1",5,5,agentsSerial,agentsName,"gad",5,6,7);
+//        r2=new Report("addME2",5,5,agentsSerial2,agentsName2,"gadgad",5,6,7);
     }
 
     @Test

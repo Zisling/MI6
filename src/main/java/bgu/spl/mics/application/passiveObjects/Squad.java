@@ -11,6 +11,7 @@ public class Squad {
 
 	private Map<String, Agent> agents;
 	private static Squad instance;
+	private static final Object lock = new Object();
 	/**
 	 * Retrieves the single instance of this class.
 	 */
@@ -43,20 +44,29 @@ public class Squad {
 	 * Releases agents.
 	 */
 	public void releaseAgents(List<String> serials){
-		// TODO Implement this
+		synchronized (lock){
+		for (String serial : serials) {
+			agents.get(serial).release();
+			lock.notify();
+		}}
 	}
 
 	/**
 	 * simulates executing a mission by calling sleep.
-	 * @param time   milliseconds to sleep
+	 * @param time   time ticks to sleep
 	 */
 	public void sendAgents(List<String> serials, int time){
 		try {
-			Thread.sleep(time);
+			Thread.sleep(time*100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
+		synchronized (lock){
+		for (String serial : serials) {
+			agents.get(serial).release();
+			lock.notify();
+		}}
+		}
 
 	/**
 	 * acquires an agent, i.e. holds the agent until the caller is done with it
@@ -64,9 +74,29 @@ public class Squad {
 	 * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
 	 */
 	public boolean getAgents(List<String> serials){
-		//while wait for agent to return
-//		TODO
-		return true;
+		for (String serial : serials) {
+			if (!agents.containsKey(serial)){
+				return false;
+			}
+		}
+		synchronized (lock){
+		for (int i = 0; i < serials.size(); i++) {
+			Agent s = agents.get(serials.get(i));
+			if (s.isAvailable()){
+				s.acquire();
+			}else {
+				do {
+					try {
+						lock.wait(100); //100 millsec is one tick
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}while (!s.isAvailable());
+				s.acquire();
+			}
+		}
+		}
+		return false;
 	}
 
     /**
@@ -75,11 +105,11 @@ public class Squad {
      * @return a list of the names of the agents with the specified serials.
      */
     public List<String> getAgentsNames(List<String> serials){
-    	List<String> to_Ret=new LinkedList<>();
+    	List<String> toRet=new LinkedList<>();
 		for (String serial : serials) {
-			to_Ret.add(agents.get(serial).getName());
+			toRet.add(agents.get(serial).getName());
 		}
-		return to_Ret;
+		return toRet;
     }
 
 }

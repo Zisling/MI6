@@ -16,7 +16,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	private ConcurrentHashMap<Class<? extends Event<?>>, ConcurrentLinkedQueue<Subscriber>> eventMap;
 	private ConcurrentHashMap<Class<? extends Broadcast>, ConcurrentLinkedQueue<Subscriber>> broadcastMap;
 	private ConcurrentHashMap<Subscriber,ConcurrentLinkedQueue<Message>> subMap;
-	private ConcurrentHashMap<Event<?>,Future<?>> futureMessageMap;
+	private ConcurrentHashMap<Event,Future> futureMessageMap;
 
 
 //	constructor
@@ -54,7 +54,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> void complete(Event<T> e, T result) {
 		// TODO Auto-generated method stub
-		Future<?> futureToResolve=futureMessageMap.remove(e);
+		Future futureToResolve=futureMessageMap.remove(e);
 		futureToResolve.resolve(result);
 	}
 

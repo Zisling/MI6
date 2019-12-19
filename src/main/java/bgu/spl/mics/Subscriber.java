@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.Broadcasts.Terminating;
+
 import java.util.HashMap;
 
 /**
@@ -113,6 +115,12 @@ public abstract class Subscriber extends RunnableSubPub {
     @Override
     public final void run() {
         myBroker.register(this);
+        subscribeBroadcast(Terminating.class, new Callback<Terminating>() {
+            @Override
+            public void call(Terminating c) {
+                terminate();
+            }
+        });
         initialize();
         while (!terminated) {
             try {

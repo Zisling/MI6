@@ -25,12 +25,6 @@ public class Moneypenny extends Subscriber {
 
 	@Override
 	protected void initialize() {
-		subscribeBroadcast(Terminating.class, new Callback<Terminating>() {
-			@Override
-			public void call(Terminating c) {
-				terminate();
-			}
-		});
 		subscribeEvent(AgentAvailableEvent.class, new Callback<AgentAvailableEvent>() {
 			@Override
 			public void call(AgentAvailableEvent c) {
