@@ -103,12 +103,9 @@ public class MessageBrokerImpl implements MessageBroker {
 			try {
 				if (subMap.containsKey(currSub)){
 					subMap.get(currSub).add(e);
-					currSub.notify();
 					futureOut=new Future<>();
-					if (futureOut==null){
-						System.out.println("wtf");
-					}
 					futureMessageMap.put(e,futureOut);//Adding the future object associated to the event to the hash map
+					currSub.notify();
 				}
 			}catch (Exception m){m.getMessage();}
 		}
