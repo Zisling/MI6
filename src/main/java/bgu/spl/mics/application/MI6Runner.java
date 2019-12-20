@@ -26,6 +26,7 @@ public class MI6Runner {
         Inventory myInventory = Inventory.getInstance();
         Squad mySquad = Squad.getInstance();
         MessageBroker myBroker = MessageBrokerImpl.getInstance();
+        Diary mydiary = Diary.getInstance();
         Gson gson = new Gson();
 
         try {
@@ -76,6 +77,12 @@ public class MI6Runner {
             }
 
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+//        todo: find sol for the waiting problem here
+        try {
+            Thread.sleep(25*100);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         myInventory.printToFile(args[1]);

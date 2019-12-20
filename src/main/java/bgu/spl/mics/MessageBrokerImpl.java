@@ -62,7 +62,6 @@ public class MessageBrokerImpl implements MessageBroker {
 		System.out.println(result.getClass());
 		if (futureToResolve!=null){
 			futureToResolve.resolve(result);
-			System.out.println(futureToResolve.isDone());
 		}else {
 			System.out.println("Resolve is null");
 		}
@@ -114,8 +113,9 @@ public class MessageBrokerImpl implements MessageBroker {
 			System.out.println("currSub is null");
 		}
 		}
-		if (futureOut==null)
-		System.out.println("send a futureOut null");
+		if (futureOut==null){
+		System.out.println("send a futureOut null "+e.toString());
+		}
 		return futureOut;
 	}
 
