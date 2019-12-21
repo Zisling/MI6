@@ -59,7 +59,6 @@ public class Inventory {
      * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
      */
 	public boolean getItem(String gadget){
-		synchronized (this) {
 			for (String toCheck : gadgets) {
 				if (toCheck.equals(gadget)) {
 					gadgets.remove(toCheck);
@@ -68,7 +67,6 @@ public class Inventory {
 			}
 			return false;
 
-		}
 	}
 
 	/**

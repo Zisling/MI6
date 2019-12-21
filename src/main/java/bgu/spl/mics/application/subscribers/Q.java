@@ -38,6 +38,7 @@ public class Q extends Subscriber {
 			public void call(GadgetAvailableEvent c) {
 				if (c != null) {
 					int receiveTime = tick;
+					System.out.println(c.getGadget());
 					if (myInventory.getItem(c.getGadget())) {
 						complete(c, receiveTime);
 					} else {

@@ -73,6 +73,7 @@ public class M extends Subscriber {
 					complete(c, c.getMission());
 					MoneyPennyId=getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
 					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1){
+						System.out.println(mission.getGadget()+" at M");
 						QTimeTick=getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
 						if (QTimeTick!=null&&QTimeTick.get()!=-1){
 							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration()));
