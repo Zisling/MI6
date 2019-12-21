@@ -34,6 +34,9 @@ public class MI6Runner {
             JsonObject inputJson = gson.fromJson(read, JsonObject.class);
             String [] inventoryGadget =gson.fromJson(inputJson.get("inventory"), String[].class);
             Agent[] squad = gson.fromJson(inputJson.get("squad"), Agent[].class);
+            for (Agent agent : squad) {
+                agent.release();
+            }
             mySquad.load(squad);
             JsonObject services = gson.fromJson(inputJson.get("services"), JsonObject.class);
             TimeService myTimeService = new TimeService(services.get("time").getAsInt()); //todo replace name

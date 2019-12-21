@@ -25,24 +25,18 @@ public class Q extends Subscriber {
 	@Override
 	protected void initialize() {
 
-		subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
-			@Override
-			public void call(TickBroadcast c) {
-				if (c!=null){
-					tick=c.getTimeTick();
-				}
+		subscribeBroadcast(TickBroadcast.class, c -> {
+			if (c!=null){
+				tick=c.getTimeTick();
 			}
 		});
-		subscribeEvent(GadgetAvailableEvent.class, new Callback<GadgetAvailableEvent>() {
-			@Override
-			public void call(GadgetAvailableEvent c) {
-				int receiveTime =tick;
-				if (myInventory.getItem(c.getGadget())) {
-					complete(c, receiveTime);
-				}
-				else {
-					complete(c, -1);
-				}
+		subscribeEvent(GadgetAvailableEvent.class, c -> {
+			int receiveTime =tick;
+			if (myInventory.getItem(c.getGadget())) {
+				complete(c, receiveTime);
+			}
+			else {
+				complete(c, -1);
 			}
 		});
 

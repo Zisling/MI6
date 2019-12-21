@@ -49,8 +49,9 @@ public class Squad {
 		synchronized (lock){
 		for (String serial : serials) {
 			agents.get(serial).release();
+		}
 			lock.notify();
-		}}
+		}
 	}
 
 	/**
@@ -66,8 +67,9 @@ public class Squad {
 		synchronized (lock){
 		for (String serial : serials) {
 			agents.get(serial).release();
+		}
 			lock.notify();
-		}}
+		}
 		}
 
 	/**
@@ -81,27 +83,25 @@ public class Squad {
 				return false;
 			}
 		}
-		System.out.println("before");
+		System.out.println("before "+ Thread.currentThread());
 		synchronized (lock){
-			System.out.println("after");
-		for (int i = 0; i < serials.size(); i++) {
-			Agent s = agents.get(serials.get(i));
-			if (s.isAvailable()){
-				s.acquire();
-			}else {
-				do {
-					System.out.println("loop");
-					try {
-						lock.wait(100); //100 millsec is one tick
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}while (!s.isAvailable());
+			System.out.println("after "+ Thread.currentThread());
+			for (String serial : serials) {
+				Agent s = agents.get(serial);
+				if (!s.isAvailable()) {
+					do {
+						System.out.println("loop");
+						try {
+							lock.wait(); //100 millsec is one tick
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					} while (!s.isAvailable());
+				}
 				s.acquire();
 			}
 		}
-		}
-		return false;
+		return true;
 	}
 
     /**
