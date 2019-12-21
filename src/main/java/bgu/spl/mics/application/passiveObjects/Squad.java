@@ -81,13 +81,16 @@ public class Squad {
 				return false;
 			}
 		}
+		System.out.println("before");
 		synchronized (lock){
+			System.out.println("after");
 		for (int i = 0; i < serials.size(); i++) {
 			Agent s = agents.get(serials.get(i));
 			if (s.isAvailable()){
 				s.acquire();
 			}else {
 				do {
+					System.out.println("loop");
 					try {
 						lock.wait(100); //100 millsec is one tick
 					} catch (InterruptedException e) {
