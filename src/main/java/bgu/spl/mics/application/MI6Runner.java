@@ -33,6 +33,7 @@ public class MI6Runner {
             JsonReader read = new JsonReader(new FileReader(args[0]));
             JsonObject inputJson = gson.fromJson(read, JsonObject.class);
             String [] inventoryGadget =gson.fromJson(inputJson.get("inventory"), String[].class);
+            myInventory.load(inventoryGadget);
             Agent[] squad = gson.fromJson(inputJson.get("squad"), Agent[].class);
             for (Agent agent : squad) {
                 agent.release();
