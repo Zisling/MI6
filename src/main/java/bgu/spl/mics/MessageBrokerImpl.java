@@ -4,6 +4,7 @@ package bgu.spl.mics;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.*;
@@ -30,6 +31,7 @@ public class MessageBrokerImpl implements MessageBroker {
 
 		broadcastMap.put(TickBroadcast.class,new ConcurrentLinkedQueue<>());
 		broadcastMap.put(Terminating.class,new ConcurrentLinkedQueue<>());
+		broadcastMap.put(AbortBroadCast.class,new ConcurrentLinkedQueue<>());
 		eventMap.put(AgentAvailableEvent.class,new ConcurrentLinkedQueue<>());
 		eventMap.put(MissionReceviedEvent.class,new ConcurrentLinkedQueue<>());
 		eventMap.put(GadgetAvailableEvent.class,new ConcurrentLinkedQueue<>());

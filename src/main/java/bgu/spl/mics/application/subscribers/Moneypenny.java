@@ -2,6 +2,7 @@ package bgu.spl.mics.application.subscribers;
 
 import bgu.spl.mics.Callback;
 import bgu.spl.mics.Subscriber;
+import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
 import bgu.spl.mics.application.Events.ReadyEvent;
@@ -45,6 +46,15 @@ public class Moneypenny extends Subscriber {
 					else {
 						complete(c, -1);
 					}
+				}
+			}
+		});
+
+		subscribeBroadcast(AbortBroadCast.class, new Callback<AbortBroadCast>() {
+			@Override
+			public void call(AbortBroadCast c) {
+				if (c!=null){
+					mySquad.releaseAgents(c.getAgentToRelease());
 				}
 			}
 		});

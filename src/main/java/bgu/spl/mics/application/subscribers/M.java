@@ -3,6 +3,7 @@ package bgu.spl.mics.application.subscribers;
 import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.Subscriber;
+import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
@@ -74,13 +75,16 @@ public class M extends Subscriber {
 					MoneyPennyId=getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
 					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1&&MoneyPennyId.isDone()){
 						QTimeTick=getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
-						if (QTimeTick!=null&&QTimeTick.get()!=-1){
+						if (QTimeTick!=null&&QTimeTick.get()!=-1&&mission.getDuration()+tick<mission.getTimeExpired()){
 							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(),mission.getSerialAgentsNumbers()));
 							if (AgentsNames!=null){
 								System.out.println("look at me "+AgentsNames.get());
 								System.out.println(tick);
 								docReport(createReport(c.getMissionName(),MoneyPennyId.get(),mission.getSerialAgentsNumbers(),AgentsNames.get(),mission.getGadget(),mission.getTimeIssued(),QTimeTick.get()));
 							}
+						}
+						else {
+							getSimplePublisher().sendBroadcast(new AbortBroadCast(mission.getSerialAgentsNumbers()));
 						}
 					}
 					complete(c, c.getMission());
