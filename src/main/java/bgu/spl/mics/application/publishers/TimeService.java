@@ -6,6 +6,7 @@ import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TimeService is the global system timer There is only one instance of this Publisher.
@@ -18,19 +19,20 @@ import java.util.TimerTask;
  */
 public class TimeService extends Publisher {
 
+	private boolean toStart= true;
 	private int time;
 	private int speed=100;
-	private int timeTick;
+	private AtomicInteger timeTick;
 	private Timer clock;
 	public TimeService() {
 		super("Clock");
-		timeTick =0;
+		timeTick =new AtomicInteger(0);
 		time = 1000;
 	}
 
 	public TimeService(int time) {
 		super("Clock");
-		timeTick =0;
+		timeTick =new AtomicInteger(0);
 		this.time = time;
 	}
 
@@ -40,9 +42,12 @@ public class TimeService extends Publisher {
 		clock.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				timeTick++;
+				int val;
+				do {
+					val=timeTick.get();
+				}while (!timeTick.compareAndSet(val,val+1));
 				System.out.println(timeTick);
-				if (timeTick <time){
+				if (timeTick.get()<time){
 					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 				}
 				else {

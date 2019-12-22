@@ -2,14 +2,16 @@ package bgu.spl.mics.application.Broadcasts;
 
 import bgu.spl.mics.Broadcast;
 
-public class TickBroadcast implements Broadcast{
-    private int TimeTick;
+import java.util.concurrent.atomic.AtomicInteger;
 
-    public TickBroadcast(int timeTick) {
+public class TickBroadcast implements Broadcast{
+    private AtomicInteger TimeTick;
+
+    public TickBroadcast(AtomicInteger timeTick) {
         TimeTick = timeTick;
     }
 
-    public int getTimeTick() {
+    public AtomicInteger getTimeTick() {
         return TimeTick;
     }
 }

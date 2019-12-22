@@ -118,6 +118,13 @@ public abstract class Subscriber extends RunnableSubPub {
         subscribeBroadcast(Terminating.class, new Callback<Terminating>() {
             @Override
             public void call(Terminating c) {
+                try {
+                    synchronized (this){
+//                    this.notifyAll();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 terminate();
             }
         });

@@ -8,6 +8,7 @@ import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.*;
+import bgu.spl.mics.application.subscribers.Q;
 
 /**
  * The {@link MessageBrokerImpl class is the implementation of the MessageBroker interface.
@@ -20,9 +21,9 @@ public class MessageBrokerImpl implements MessageBroker {
 	private ConcurrentHashMap<Class<? extends Broadcast>, ConcurrentLinkedQueue<Subscriber>> broadcastMap;
 	private ConcurrentHashMap<Subscriber,ConcurrentLinkedQueue<Message>> subMap;
 	private ConcurrentHashMap<Event,Future> futureMessageMap;
+	private Q MyQ;
 
-
-//	constructor
+	//	constructor
 	private MessageBrokerImpl(){
 		eventMap = new ConcurrentHashMap<>();
 		broadcastMap = new ConcurrentHashMap<>();
@@ -61,7 +62,6 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> void complete(Event<T> e, T result) {
 		Future futureToResolve=futureMessageMap.get(e);
-		System.out.println(result.getClass());
 		if (futureToResolve!=null){
 			futureToResolve.resolve(result);
 		}else {
@@ -92,34 +92,35 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
+	public  <T> Future<T> sendEvent(Event<T> e) {
 		// TODO Auto-generated method stub
 		Future<T> futureOut=null;
 		ConcurrentLinkedQueue<Subscriber> roundRobinQ=eventMap.get(e.getClass());
+		Subscriber currSub=null;
+		synchronized (eventMap.get(e.getClass())){
 		if (!roundRobinQ.isEmpty()){
-			Subscriber currSub=null;
 			currSub=roundRobinQ.poll();
-			roundRobinQ.add(currSub);
+			roundRobinQ.add(currSub);}}
 			if(currSub!=null) {
-			try {
+				try {
 				if (subMap.containsKey(currSub)){
 					subMap.get(currSub).add(e);
 					futureOut=new Future<>();
 					futureMessageMap.put(e,futureOut);//Adding the future object associated to the event to the hash map
 				}
-				System.out.println(currSub.getClass() + " " + currSub.getName() + " is notify");
 				synchronized (currSub){
 				currSub.notifyAll();}
 			}catch (Exception m){m.getMessage();}
 		}
-		else{
-//			*temp line
-			System.out.println("currSub is null");
-		}
-		}
-		if (futureOut==null){
-		System.out.println("send a futureOut null "+e.toString());
-		}
+			else {
+				if (e.getClass()==GadgetAvailableEvent.class){
+					subMap.get(MyQ).add(e);
+					futureOut=new Future<>();
+					futureMessageMap.put(e,futureOut);
+					synchronized (MyQ){
+						MyQ.notifyAll();}
+			}
+			}
 		return futureOut;
 	}
 
@@ -127,6 +128,10 @@ public class MessageBrokerImpl implements MessageBroker {
 	public void register(Subscriber m) {
 		if(!subMap.containsKey(m))
 		subMap.put(m, new ConcurrentLinkedQueue<>());
+
+		if (m.getClass()==Q.class){
+			MyQ= ((Q) m);
+		}
 	}
 
 	@Override
@@ -155,10 +160,8 @@ public class MessageBrokerImpl implements MessageBroker {
 			synchronized (m)
 			{
 				m.wait();
-//				System.out.println("i wait");
 			}
 		}
-//		System.out.println(subMessagelist.peek());
 		return subMessagelist.poll();
 	}
 

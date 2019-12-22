@@ -13,6 +13,9 @@ public class Agent {
 	private boolean available_flag;
 
 	//Agent Constructor
+	public Agent(){
+		this.available_flag=true;
+	}
 	public Agent(String serialNumber,String agentName){
 	this.serialNumber =serialNumber;
 	this.name =agentName;

@@ -83,21 +83,20 @@ public class Squad {
 				return false;
 			}
 		}
-		System.out.println("before "+ Thread.currentThread());
-		synchronized (lock){
-			System.out.println("after "+ Thread.currentThread());
+
 			for (String serial : serials) {
 				Agent s = agents.get(serial);
 				if (!s.isAvailable()) {
 					do {
-						System.out.println("loop");
-						try {
-							lock.wait();
+							try {
+								synchronized (lock){
+									lock.wait();
+								}
+
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					} while (!s.isAvailable());
-				}
 				s.acquire();
 			}
 		}

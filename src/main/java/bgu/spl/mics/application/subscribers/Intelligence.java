@@ -9,6 +9,7 @@ import bgu.spl.mics.application.Events.MissionReceviedEvent;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
 
 import java.util.HashMap;
+import java.util.Queue;
 
 /**
  * A Publisher\Subscriber.
@@ -18,18 +19,16 @@ import java.util.HashMap;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Intelligence extends Subscriber {
-	HashMap<Integer, MissionInfo> MissionMap;
-	int countTear;
+	HashMap<Integer, Queue<MissionInfo>> MissionMap;
 
 
 	public Intelligence() {
 		super("default");
 	}
 
-	public Intelligence(String name, HashMap<Integer, MissionInfo> MissionMap) {
+	public Intelligence(String name, HashMap<Integer, Queue<MissionInfo>> MissionMap) {
 		super(name);
 		this.MissionMap = MissionMap;
-		countTear=MissionMap.keySet().size();
 	}
 
 	@Override
@@ -39,12 +38,13 @@ public class Intelligence extends Subscriber {
 			@Override
 			public void call(TickBroadcast c) {
 				Future<?> a= null;
+				int tick = c.getTimeTick().get();
 				if (c!=null){
-					if (MissionMap.containsKey(c.getTimeTick())){
-						 a=getSimplePublisher().sendEvent(new MissionReceviedEvent(MissionMap.get(c.getTimeTick()).getMissionName(),MissionMap.get(c.getTimeTick())));
-						 countTear--;
-						 if (countTear==0){terminate();
-						 }
+					if (MissionMap.containsKey(tick)){
+						for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
+							MissionInfo toSend = MissionMap.get(tick).poll();
+							a=getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getMissionName(),toSend));
+						}
 					}
 				}
 			}

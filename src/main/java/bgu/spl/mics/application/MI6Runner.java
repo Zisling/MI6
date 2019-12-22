@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Queue;
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -28,6 +29,7 @@ public class MI6Runner {
         MessageBroker myBroker = MessageBrokerImpl.getInstance();
         Diary mydiary = Diary.getInstance();
         Gson gson = new Gson();
+        Thread[] oof=null;
 
         try {
             JsonReader read = new JsonReader(new FileReader(args[0]));
@@ -35,9 +37,6 @@ public class MI6Runner {
             String [] inventoryGadget =gson.fromJson(inputJson.get("inventory"), String[].class);
             myInventory.load(inventoryGadget);
             Agent[] squad = gson.fromJson(inputJson.get("squad"), Agent[].class);
-            for (Agent agent : squad) {
-                agent.release();
-            }
             mySquad.load(squad);
             JsonObject services = gson.fromJson(inputJson.get("services"), JsonObject.class);
             TimeService myTimeService = new TimeService(services.get("time").getAsInt()); //todo replace name
@@ -57,14 +56,15 @@ public class MI6Runner {
             for (int i = 0; i < myIntelligence.size(); i++) {
                 JsonObject m = gson.fromJson(myIntelligence.get(i), JsonObject.class);
                 MissionInfo[] missions = gson.fromJson(m.get("missions"), MissionInfo[].class);
-                HashMap<Integer ,MissionInfo> map = new HashMap<>();
+                HashMap<Integer , Queue<MissionInfo>> map = new HashMap<>();
                 for (MissionInfo mission : missions) {
-                    map.put(mission.getTimeIssued(), mission);
+                    if (!map.containsKey(mission.getTimeIssued())){map.put(mission.getTimeIssued(),new LinkedList<>());}
+                    map.get(mission.getTimeIssued()).add(mission);
                 }
                 intelligenceArr[i] = new Intelligence(Integer.toString(i),map);
             }
             int numbersOfSubPub =numberOfM+numberOfMoneypenny+myIntelligence.size()+2;
-            Thread[] oof = new Thread[numbersOfSubPub];
+            oof = new Thread[numbersOfSubPub];
             for (int i = 0; i < numberOfM; i++) {
                 oof[i]=new Thread(MArr[i]);
             }
@@ -77,7 +77,7 @@ public class MI6Runner {
             oof[oof.length-1]=new Thread(myTimeService);
             oof[oof.length-2]= new Thread(myQ);
 
-            for (int i = oof.length-1; i >= 0; i--) {
+            for (int i = 0; i < oof.length; i++) {
                 oof[i].start();
             }
 
@@ -86,7 +86,9 @@ public class MI6Runner {
         }
 //        todo: find sol for the waiting problem here
         try {
-            Thread.sleep(25*100);
+            for (Thread thread : oof) {
+                thread.join();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
