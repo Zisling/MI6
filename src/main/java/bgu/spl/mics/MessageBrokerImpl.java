@@ -80,7 +80,7 @@ public class MessageBrokerImpl implements MessageBroker {
 			}
 			synchronized (sub)
 			{
-				sub.notify();
+				sub.notifyAll();
 			}
 		}
 
@@ -107,7 +107,7 @@ public class MessageBrokerImpl implements MessageBroker {
 				}
 				System.out.println(currSub.getClass() + " " + currSub.getName() + " is notify");
 				synchronized (currSub){
-				currSub.notify();}
+				currSub.notifyAll();}
 			}catch (Exception m){m.getMessage();}
 		}
 		else{

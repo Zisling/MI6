@@ -76,8 +76,9 @@ public class M extends Subscriber {
 						QTimeTick=getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
 						if (QTimeTick!=null&&QTimeTick.get()!=-1){
 							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(),mission.getSerialAgentsNumbers()));
-							System.out.println("look at me "+AgentsNames.get());
-							if (AgentsNames!=null&&mission.getTimeExpired()<tick){
+							if (AgentsNames!=null){
+								System.out.println("look at me "+AgentsNames.get());
+								System.out.println(tick);
 								docReport(createReport(c.getMissionName(),MoneyPennyId.get(),mission.getSerialAgentsNumbers(),AgentsNames.get(),mission.getGadget(),mission.getTimeIssued(),QTimeTick.get()));
 							}
 						}
