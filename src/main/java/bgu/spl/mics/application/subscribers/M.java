@@ -14,6 +14,7 @@ import bgu.spl.mics.application.passiveObjects.MissionInfo;
 import bgu.spl.mics.application.passiveObjects.Report;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * M handles ReadyEvent - fills a report and sends agents to mission.
@@ -70,21 +71,23 @@ public class M extends Subscriber {
 				Future<List<String >> AgentsNames= null;
 				if (c!=null){
 					MissionInfo mission = c.getMission();
-					complete(c, c.getMission());
 					MoneyPennyId=getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
-					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1){
-						System.out.println(mission.getGadget()+" at M");
+					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1&&MoneyPennyId.isDone()){
 						QTimeTick=getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
 						if (QTimeTick!=null&&QTimeTick.get()!=-1){
-							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration()));
+							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(),mission.getSerialAgentsNumbers()));
+							System.out.println("look at me "+AgentsNames.get());
 							if (AgentsNames!=null&&mission.getTimeExpired()<tick){
 								docReport(createReport(c.getMissionName(),MoneyPennyId.get(),mission.getSerialAgentsNumbers(),AgentsNames.get(),mission.getGadget(),mission.getTimeIssued(),QTimeTick.get()));
 							}
 						}
 					}
+					complete(c, c.getMission());
+
 				}
 			}
 		});
+
 		// TODO Implement this
 
 	}

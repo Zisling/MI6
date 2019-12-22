@@ -104,8 +104,10 @@ public class MessageBrokerImpl implements MessageBroker {
 					subMap.get(currSub).add(e);
 					futureOut=new Future<>();
 					futureMessageMap.put(e,futureOut);//Adding the future object associated to the event to the hash map
-					currSub.notify();
 				}
+				System.out.println(currSub.getClass() + " " + currSub.getName() + " is notify");
+				synchronized (currSub){
+				currSub.notify();}
 			}catch (Exception m){m.getMessage();}
 		}
 		else{
@@ -151,9 +153,10 @@ public class MessageBrokerImpl implements MessageBroker {
 			synchronized (m)
 			{
 				m.wait();
+//				System.out.println("i wait");
 			}
 		}
-
+//		System.out.println(subMessagelist.peek());
 		return subMessagelist.poll();
 	}
 

@@ -41,6 +41,7 @@ public class TimeService extends Publisher {
 			@Override
 			public void run() {
 				timeTick++;
+				System.out.println(timeTick);
 				if (timeTick <time){
 					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 				}
@@ -49,7 +50,7 @@ public class TimeService extends Publisher {
 					clock.cancel();
 				}
 			}
-		}, 0, 100);
+		}, 0, speed);
 
 	}
 

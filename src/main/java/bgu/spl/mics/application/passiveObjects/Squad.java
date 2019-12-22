@@ -92,7 +92,7 @@ public class Squad {
 					do {
 						System.out.println("loop");
 						try {
-							lock.wait(); //100 millsec is one tick
+							lock.wait();
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

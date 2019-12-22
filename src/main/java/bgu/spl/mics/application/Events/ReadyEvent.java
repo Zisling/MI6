@@ -5,13 +5,19 @@ import bgu.spl.mics.Event;
 import java.util.List;
 
 public class ReadyEvent implements Event<List<String>> {
-    int duration;
-
-    public ReadyEvent(int duration) {
+    private  int duration;
+    private List<String> serialAgentsNumbers;
+    public ReadyEvent(int duration, List<String> serialAgentsNumbers) {
         this.duration = duration;
+        this.serialAgentsNumbers= serialAgentsNumbers;
+    }
+
+    public List<String> getSerialAgentsNumbers() {
+        return serialAgentsNumbers;
     }
 
     public int getDuration() {
         return duration;
     }
 }
+

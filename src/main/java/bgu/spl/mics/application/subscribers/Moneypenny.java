@@ -4,6 +4,7 @@ import bgu.spl.mics.Callback;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
+import bgu.spl.mics.application.Events.ReadyEvent;
 import bgu.spl.mics.application.passiveObjects.Squad;
 
 /**
@@ -25,6 +26,15 @@ public class Moneypenny extends Subscriber {
 
 	@Override
 	protected void initialize() {
+		subscribeEvent(ReadyEvent.class, new Callback<ReadyEvent>() {
+			@Override
+			public void call(ReadyEvent c) {
+				if (c!=null){
+					mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
+					complete(c, mySquad.getAgentsNames(c.getSerialAgentsNumbers()));
+				}
+			}
+		});
 		subscribeEvent(AgentAvailableEvent.class, new Callback<AgentAvailableEvent>() {
 			@Override
 			public void call(AgentAvailableEvent c) {
