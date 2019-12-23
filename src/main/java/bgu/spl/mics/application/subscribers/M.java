@@ -33,7 +33,7 @@ public class M extends Subscriber {
 		myDiary = Diary.getInstance();
 	}
 
-	public Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime,int duration){
+	public Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime){
 		Report out = new Report();
 		out.setMissionName(missionName);
 		out.setM(id);
@@ -80,7 +80,7 @@ public class M extends Subscriber {
 							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(),mission.getSerialAgentsNumbers()));
 							if (AgentsNames!=null){
 								System.out.println("look at me "+AgentsNames.get()+" "+tick.get()+ " M"+getName());
-								docReport(createReport(c.getMissionName(),MoneyPennyId.get(),mission.getSerialAgentsNumbers(),AgentsNames.get(),mission.getGadget(),mission.getTimeIssued(),QTimeTick.get(),mission.getDuration()));
+								docReport(createReport(c.getMissionName(),MoneyPennyId.get(),mission.getSerialAgentsNumbers(),AgentsNames.get(),mission.getGadget(),mission.getTimeIssued(),QTimeTick.get()));
 							}
 						}
 						else {
