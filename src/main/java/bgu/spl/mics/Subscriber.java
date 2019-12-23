@@ -120,7 +120,7 @@ public abstract class Subscriber extends RunnableSubPub {
             public void call(Terminating c) {
                 try {
                     synchronized (this){
-//                    this.notifyAll();
+                    this.notifyAll();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
