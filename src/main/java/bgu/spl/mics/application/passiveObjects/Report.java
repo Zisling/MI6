@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class Report {
 	private String missionName;
-	private int mId;
-	private int moneyPennyId;
+	private int m;
+	private int moneypenny;
 	private List<String> agentsSerialNumbers;
 	private List<String> agentsNames;
 	private String gadgetName;
@@ -37,28 +37,28 @@ public class Report {
 	 * Retrieves the M's id.
 	 */
 	public int getM() {
-		return mId;
+		return m;
 	}
 
 	/**
 	 * Sets the M's id.
 	 */
 	public void setM(int m) {
-		mId=m;
+		this.m =m;
 	}
 
 	/**
 	 * Retrieves the Moneypenny's id.
 	 */
 	public int getMoneypenny() {
-		return moneyPennyId;
+		return moneypenny;
 	}
 
 	/**
 	 * Sets the Moneypenny's id.
 	 */
 	public void setMoneypenny(int moneypenny) {
-		this.moneyPennyId=moneypenny;
+		this.moneypenny =moneypenny;
 	}
 
 	/**
