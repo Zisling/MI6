@@ -10,15 +10,15 @@ import java.util.List;
  */
 public class MissionInfo {
 
-	private String  missionName;
+	private String name;
 	private List<String> serialAgentsNumbers;
 	private String gadget;
 	private int timeIssued;
 	private int timeExpired;
 	private int duration;
 // constructor that i added
-	public MissionInfo(String missionName, List<String> serialAgentsNumbers, String gadget, int timeIssued, int timeExpired, int duration) {
-		this.missionName = missionName;
+	public MissionInfo(String name, List<String> serialAgentsNumbers, String gadget, int timeIssued, int timeExpired, int duration) {
+		this.name = name;
 		this.serialAgentsNumbers = serialAgentsNumbers;
 		this.gadget = gadget;
 		this.timeIssued = timeIssued;
@@ -29,15 +29,15 @@ public class MissionInfo {
 	/**
      * Sets the name of the mission.
      */
-    public void setMissionName(String missionName) {
-        this.missionName=missionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
 	/**
      * Retrieves the name of the mission.
      */
-	public String getMissionName() {
-		return missionName;
+	public String getName() {
+		return name;
 	}
 
     /**

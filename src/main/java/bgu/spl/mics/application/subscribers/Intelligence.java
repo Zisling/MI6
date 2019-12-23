@@ -3,7 +3,6 @@ package bgu.spl.mics.application.subscribers;
 import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.Subscriber;
-import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.MissionReceviedEvent;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
@@ -43,7 +42,7 @@ public class Intelligence extends Subscriber {
 					if (MissionMap.containsKey(tick)){
 						for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
 							MissionInfo toSend = MissionMap.get(tick).poll();
-							a=getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getMissionName(),toSend));
+							a=getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));
 						}
 					}
 				}

@@ -4,7 +4,6 @@ import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
-import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
 import bgu.spl.mics.application.Events.GadgetAvailableEvent;
@@ -15,7 +14,6 @@ import bgu.spl.mics.application.passiveObjects.MissionInfo;
 import bgu.spl.mics.application.passiveObjects.Report;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -67,7 +65,7 @@ public class M extends Subscriber {
 		subscribeEvent(MissionReceviedEvent.class, new Callback<MissionReceviedEvent>() {
 			@Override
 			public void call(MissionReceviedEvent c) {
-				System.out.println(c.getMission().getMissionName()+" "+c.getMission().getGadget()+" "+getName());
+				System.out.println(c.getMission().getName()+" "+c.getMission().getGadget()+" "+getName());
 				myDiary.incrementTotal();
 				Future<Integer> MoneyPennyId= null;
 				Future<Integer> QTimeTick= null;
