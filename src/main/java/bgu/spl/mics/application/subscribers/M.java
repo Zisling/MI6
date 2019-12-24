@@ -71,12 +71,12 @@ public class M extends Subscriber {
 				Future<Integer> QTimeTick= null;
 				Future<List<String >> AgentsNames= null;
 				complete(c, null);
-				if (c!=null&c.getMission().getTimeExpired()>tick.get()){
+				if (c.getMission().getTimeExpired()>tick.get()){
 					MissionInfo mission = c.getMission();
 					MoneyPennyId=getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
-					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1&&MoneyPennyId.isDone()){
+					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1&&MoneyPennyId.isDone()&&tick.get()<mission.getTimeExpired()){
 						QTimeTick=getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
-						if (QTimeTick!=null&&QTimeTick.get()!=-1&&mission.getDuration()+tick.get()<=mission.getTimeExpired()){
+						if (QTimeTick!=null&&QTimeTick.get()!=-1&tick.get()<mission.getTimeExpired()){
 							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(),mission.getSerialAgentsNumbers()));
 							if (AgentsNames!=null){
 								System.out.println("look at me "+AgentsNames.get()+" "+tick.get()+ " M"+getName());
@@ -87,7 +87,7 @@ public class M extends Subscriber {
 							getSimplePublisher().sendBroadcast(new AbortBroadCast(mission.getSerialAgentsNumbers()));
 						}
 					}
-
+					else if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1){getSimplePublisher().sendBroadcast(new AbortBroadCast(mission.getSerialAgentsNumbers()));}
 				}
 			}
 		});

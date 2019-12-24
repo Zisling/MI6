@@ -46,12 +46,9 @@ public class Squad {
 	 * Releases agents.
 	 */
 	public void releaseAgents(List<String> serials){
-		synchronized (lock){
 		for (String serial : serials) {
 			agents.get(serial).release();
-		}
-			lock.notify();
-		}
+	}
 	}
 
 	/**
@@ -64,11 +61,8 @@ public class Squad {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		synchronized (lock){
 		for (String serial : serials) {
 			agents.get(serial).release();
-		}
-			lock.notify();
 		}
 		}
 
@@ -83,23 +77,11 @@ public class Squad {
 				return false;
 			}
 		}
-
+			serials.sort(String::compareTo);
 			for (String serial : serials) {
 				Agent s = agents.get(serial);
-				if (!s.isAvailable()) {
-					do {
-							try {
-								synchronized (lock){
-									lock.wait();
-								}
-
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					} while (!s.isAvailable());
 				s.acquire();
 			}
-		}
 		return true;
 	}
 

@@ -11,6 +11,8 @@ public class Agent {
 	private String serialNumber;
 	private String name;
 	private boolean available_flag;
+	private final Object lock = new Object();
+
 
 	//Agent Constructor
 	public Agent(){
@@ -67,13 +69,30 @@ public class Agent {
 	 * Acquires an agent.
 	 */
 	public void acquire(){
-		available_flag=false;
+		synchronized (lock){
+			if (!isAvailable()){
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if (isAvailable()){
+			System.out.println(name +" son of a bitch i am in "+ Thread.currentThread());
+			available_flag=false;}
 	}
 
 	/**
 	 * Releases an agent.
 	 */
 	public void release(){
-		available_flag=true;
+			if (!isAvailable()){
+			available_flag=true;
+			synchronized (lock){
+			lock.notify();
+			}
+			System.out.println(name + " i am out");
+			}
 	}
 }
