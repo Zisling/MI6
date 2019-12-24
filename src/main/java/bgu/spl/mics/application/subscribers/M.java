@@ -13,6 +13,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
 import bgu.spl.mics.application.passiveObjects.Report;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,6 +51,9 @@ public class M extends Subscriber {
 	public void docReport(Report toDoc){
 		myDiary.addReport(toDoc);
 	}
+	public void missionAbort(List<String> SerialAgentsNumbers){
+		getSimplePublisher().sendBroadcast(new AbortBroadCast(SerialAgentsNumbers));
+	}
 
 	@Override
 	protected void initialize() {
@@ -74,20 +78,22 @@ public class M extends Subscriber {
 				if (c.getMission().getTimeExpired()>tick.get()){
 					MissionInfo mission = c.getMission();
 					MoneyPennyId=getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
-					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1&&MoneyPennyId.isDone()&&tick.get()<mission.getTimeExpired()){
+					if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1&&MoneyPennyId.isDone()&&tick.get()<mission.getTimeExpired()&tick.get()!=-1){
 						QTimeTick=getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
-						if (QTimeTick!=null&&QTimeTick.get()!=-1&tick.get()<mission.getTimeExpired()){
+						if (QTimeTick!=null&&QTimeTick.get()!=-1&tick.get()<mission.getTimeExpired()&tick.get()!=-1){
 							AgentsNames=getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(),mission.getSerialAgentsNumbers()));
-							if (AgentsNames!=null){
+							if (AgentsNames!=null&&AgentsNames.get()!=null&&AgentsNames.isDone()&&tick.get()!=-1){
 								System.out.println("look at me "+AgentsNames.get()+" "+tick.get()+ " M"+getName());
 								docReport(createReport(c.getMissionName(),MoneyPennyId.get(),mission.getSerialAgentsNumbers(),AgentsNames.get(),mission.getGadget(),mission.getTimeIssued(),QTimeTick.get()));
 							}
 						}
 						else {
-							getSimplePublisher().sendBroadcast(new AbortBroadCast(mission.getSerialAgentsNumbers()));
+							missionAbort(mission.getSerialAgentsNumbers());
 						}
 					}
-					else if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1){getSimplePublisher().sendBroadcast(new AbortBroadCast(mission.getSerialAgentsNumbers()));}
+					else if (MoneyPennyId!=null&&MoneyPennyId.get()!=-1){
+						missionAbort(mission.getSerialAgentsNumbers());
+					}
 				}
 			}
 		});

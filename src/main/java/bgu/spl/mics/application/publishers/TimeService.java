@@ -51,6 +51,7 @@ public class TimeService extends Publisher {
 					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 				}
 				else {
+					timeTick.set(-1); //this is for stop any mission that run
 					getSimplePublisher().sendBroadcast(new Terminating());
 					clock.cancel();
 				}
