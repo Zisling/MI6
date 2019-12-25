@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TimeService extends Publisher {
 
 	private boolean toStart= true;
-	private int time;// The timetick that the program is allowed to run upto
+	private int ProgramTime;// The TimeTick that the program is allowed to run up to.
 	private int speed=100;
 	private AtomicInteger timeTick;
 	private Timer clock;
@@ -29,13 +29,13 @@ public class TimeService extends Publisher {
 	public TimeService() {
 		super("Clock");
 		timeTick =new AtomicInteger(0);
-		time = 1000;
+		ProgramTime = 1000;
 	}
 	//TimeService's Constructor
 	public TimeService(int time) {
 		super("Clock");
 		timeTick =new AtomicInteger(0);
-		this.time = time;
+		this.ProgramTime = time;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class TimeService extends Publisher {
 					val=timeTick.get();
 				}while (!timeTick.compareAndSet(val,val+1));
 				System.out.println(timeTick);
-				if (timeTick.get()<time){
+				if (timeTick.get()<ProgramTime){
 					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 				}
 				else {
