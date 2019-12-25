@@ -37,8 +37,8 @@ public class Intelligence extends Subscriber {
 			@Override
 			public void call(TickBroadcast c) {
 				Future<?> a= null;
-				int tick = c.getTimeTick().get();
 				if (c!=null){
+					int tick = c.getTimeTick().get();
 					if (MissionMap.containsKey(tick)){
 						for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
 							MissionInfo toSend = MissionMap.get(tick).poll();

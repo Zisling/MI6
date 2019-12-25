@@ -8,10 +8,8 @@ import java.util.*;
  * You may add ONLY private fields and methods to this class.
  */
 public class Squad {
-
 	private Map<String, Agent> agents;
 	private static Squad instance;
-	private static final Object lock = new Object();
 	/**
 	 * Retrieves the single instance of this class.
 	 */
@@ -49,6 +47,7 @@ public class Squad {
 		for (String serial : serials) {
 			agents.get(serial).release();
 	}
+
 	}
 
 	/**
@@ -57,7 +56,8 @@ public class Squad {
 	 */
 	public void sendAgents(List<String> serials, int time){
 		try {
-			Thread.sleep(time*100);
+			int speed = 100;
+			Thread.sleep(time* speed);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
