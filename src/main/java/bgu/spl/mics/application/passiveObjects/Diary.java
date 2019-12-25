@@ -23,7 +23,7 @@ public class Diary {
 	private AtomicInteger total;
 
 	private Diary() {
-		reports= new LinkedList<Report>();
+		reports= new LinkedList<>();
 		total= new AtomicInteger(0);
 	}
 
@@ -37,6 +37,10 @@ public class Diary {
 		return instance;
 	}
 
+	/**
+	 * Retrieves the reports List of this Diary
+	 * @return reports- list of reports of Diary singleton
+	 */
 	public List<Report> getReports() {
 		return reports;
 	}

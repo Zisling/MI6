@@ -10,14 +10,15 @@ import java.util.*;
 public class Squad {
 	private Map<String, Agent> agents;
 	private static Squad instance;
-	/**
-	 * Retrieves the single instance of this class.
-	 */
+
 	//Squad Constructor
 	private Squad(){
 		agents = new HashMap<>();
 	}
 
+	/**
+	 * Retrieves the single instance of this class.
+	 */
 	public static Squad getInstance() {
 		if(instance==null)
 		{
@@ -56,14 +57,11 @@ public class Squad {
 	 */
 	public void sendAgents(List<String> serials, int time){
 		try {
-			int speed = 100;
-			Thread.sleep(time* speed);
+			Thread.sleep(time* 100);// 100 milliseconds
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		for (String serial : serials) {
-			agents.get(serial).release();
-		}
+		releaseAgents(serials);
 		}
 
 	/**
@@ -72,12 +70,16 @@ public class Squad {
 	 * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
 	 */
 	public boolean getAgents(List<String> serials){
+		//if a serial number is missing returns false
 		for (String serial : serials) {
 			if (!agents.containsKey(serial)){
 				return false;
 			}
 		}
+		//sorting the list of agents serials to avoid locks while acquiring them
 			serials.sort(String::compareTo);
+
+		//acquires the agents from the serials list and returns true
 			for (String serial : serials) {
 				Agent s = agents.get(serial);
 				s.acquire();

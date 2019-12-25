@@ -16,16 +16,7 @@ public class MissionInfo {
 	private int timeIssued;
 	private int timeExpired;
 	private int duration;
-// constructor that i added
-	public MissionInfo(String name, List<String> serialAgentsNumbers, String gadget, int timeIssued, int timeExpired, int duration) {
-		this.name = name;
-		this.serialAgentsNumbers = serialAgentsNumbers;
-		this.gadget = gadget;
-		this.timeIssued = timeIssued;
-		this.timeExpired = timeExpired;
-		this.duration = duration;
-	}
-//end of constructor that i added
+
 	/**
      * Sets the name of the mission.
      */

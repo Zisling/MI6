@@ -22,6 +22,7 @@ public class Inventory {
 	private List<String> gadgets;
 	private static Inventory instance;
 
+	//Inventory's default constructor
 	private Inventory(){}
 
 	/**
@@ -43,13 +44,11 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (String[] inventory) {
-		synchronized (this){
 			if(gadgets==null)
 			{
 				gadgets=new LinkedList<>();
 			}
 			gadgets.addAll(Arrays.asList(inventory));
-		}
 	}
 	
 	/**
