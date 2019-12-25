@@ -35,7 +35,7 @@ public class M extends Subscriber {
 		myDiary = Diary.getInstance();
 	}
 
-	public Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime){
+	public Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime,int duration){
 		Report out = new Report();
 		out.setMissionName(missionName);
 		out.setM(id);
@@ -45,7 +45,7 @@ public class M extends Subscriber {
 		out.setGadgetName(gadgetName);
 		out.setTimeIssued(timeIssued);
 		out.setQTime(QTime);
-		out.setTimeCreated(tick.get());
+		out.setTimeCreated(QTime+duration);
 		return out;
 	}
 
@@ -70,9 +70,9 @@ public class M extends Subscriber {
 		subscribeEvent(MissionReceviedEvent.class, new Callback<MissionReceviedEvent>() {
 			@Override
 			public void call(MissionReceviedEvent c) {
+				myDiary.incrementTotal();
 				if (tick.get()!=-1) {
 					System.out.println(c.getMission().getName() + " " + c.getMission().getGadget() + " " + getName());
-					myDiary.incrementTotal();
 					Future<Integer> MoneyPennyId = null;
 					Future<Integer> QTimeTick = null;
 					Future<List<String>> AgentsNames = null;
@@ -84,9 +84,9 @@ public class M extends Subscriber {
 							QTimeTick = getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
 							if (QTimeTick != null && QTimeTick.get() != -1 & tick.get() < mission.getTimeExpired() & tick.get() != -1) {
 								AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
-								if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone() & tick.get() != -1) {
+								if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
 									System.out.println("look at me " + AgentsNames.get() + " " + tick.get() + " M" + getName());
-									docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get()));
+									docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get(),mission.getDuration()));
 								} else {
 									missionAbort(mission.getSerialAgentsNumbers());
 								}
