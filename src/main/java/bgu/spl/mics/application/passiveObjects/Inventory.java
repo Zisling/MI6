@@ -20,16 +20,19 @@ import java.util.List;
  */
 public class Inventory {
 	private List<String> gadgets;
-	private final static Inventory instance=new Inventory();
 
 	//Inventory's default constructor
 	private Inventory(){}
 
+	//Holds the singleton instance of Inventory
+	private static class InventoryHolder{
+		private static final Inventory instance=new Inventory();
+	}
 	/**
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
-		return instance;
+		return InventoryHolder.instance;
 	}
 
 

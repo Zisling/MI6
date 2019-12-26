@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class Diary {
-	private final static Diary instance=new Diary();
 	private final List<Report> reports;
 	private AtomicInteger total;
 
@@ -27,11 +26,15 @@ public class Diary {
 		total= new AtomicInteger(0);
 	}
 
+	private static class DiaryHolder
+	{
+		private static final Diary instance=new Diary();
+	}
 	/**
 	 * Retrieves the single instance of this class.
 	 */
 	public static Diary getInstance() {
-		return instance;
+		return DiaryHolder.instance;
 	}
 
 	/**
