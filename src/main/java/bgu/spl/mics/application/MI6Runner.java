@@ -28,68 +28,82 @@ public class MI6Runner {
         MessageBroker myBroker = MessageBrokerImpl.getInstance();
         Diary mydiary = Diary.getInstance();
         Gson gson = new Gson();
-        Thread[] oof=null;
+        Thread[] threadsArr=null;
 
         try {
             JsonReader read = new JsonReader(new FileReader(args[0]));
             JsonObject inputJson = gson.fromJson(read, JsonObject.class);
+//            load inventory
             String [] inventoryGadget =gson.fromJson(inputJson.get("inventory"), String[].class);
             myInventory.load(inventoryGadget);
+//            load agents
             Agent[] squad = gson.fromJson(inputJson.get("squad"), Agent[].class);
             mySquad.load(squad);
+//            go to json services
             JsonObject services = gson.fromJson(inputJson.get("services"), JsonObject.class);
-            TimeService myTimeService = new TimeService(services.get("time").getAsInt()); //todo replace name
-            Q myQ = new Q("nanoMachineSon"); //todo replace name
+//            crate timeService
+            TimeService myTimeService = new TimeService(services.get("time").getAsInt());
+//            crate Q
+            Q myQ = new Q("Q");
+//            crate M's
             int numberOfM = services.get("M").getAsInt();
             int numberOfMoneypenny = services.get("Moneypenny").getAsInt();
             M[] MArr = new M[numberOfM];
             Moneypenny[] MoneypennyArr = new Moneypenny[numberOfMoneypenny];
+//            crate M
             for (int i = 0; i < numberOfM; i++) {
                 MArr[i]= new M(Integer.toString(i));
             }
+//            crate MoneyPenny
             for (int i = 0; i < numberOfMoneypenny; i++) {
                 MoneypennyArr[i]= new Moneypenny(Integer.toString(i));
             }
+//            crate Intelligence subs
             JsonArray myIntelligence = gson.fromJson(services.get("intelligence"), JsonArray.class);
             Intelligence[] intelligenceArr= new Intelligence[myIntelligence.size()];
+//            crate MissionInfo
             for (int i = 0; i < myIntelligence.size(); i++) {
                 JsonObject m = gson.fromJson(myIntelligence.get(i), JsonObject.class);
                 MissionInfo[] missions = gson.fromJson(m.get("missions"), MissionInfo[].class);
                 HashMap<Integer , Queue<MissionInfo>> map = new HashMap<>();
+//                enter the MissionInfo in to map
                 for (MissionInfo mission : missions) {
                     if (!map.containsKey(mission.getTimeIssued())){map.put(mission.getTimeIssued(),new LinkedList<>());}
                     map.get(mission.getTimeIssued()).add(mission);
                 }
+//                put all intelligence in to Arr
                 intelligenceArr[i] = new Intelligence(Integer.toString(i),map);
             }
             int numbersOfSubPub =numberOfM+numberOfMoneypenny+myIntelligence.size()+2;
-            oof = new Thread[numbersOfSubPub];
+            threadsArr = new Thread[numbersOfSubPub];
             for (int i = 0; i < numberOfM; i++) {
-                oof[i]=new Thread(MArr[i]);
+                threadsArr[i]=new Thread(MArr[i]);
             }
             for (int i = numberOfM; i <numberOfM+numberOfMoneypenny ; i++) {
-                oof[i]= new Thread(MoneypennyArr[i-numberOfM]);
+                threadsArr[i]= new Thread(MoneypennyArr[i-numberOfM]);
             }
             for (int i = numberOfM+numberOfMoneypenny; i <numberOfM+numberOfMoneypenny+myIntelligence.size() ; i++) {
-                oof[i]= new Thread(intelligenceArr[i-numberOfM-numberOfMoneypenny]);
+                threadsArr[i]= new Thread(intelligenceArr[i-numberOfM-numberOfMoneypenny]);
             }
-            oof[oof.length-1]=new Thread(myTimeService);
-            oof[oof.length-2]= new Thread(myQ);
+            threadsArr[threadsArr.length-2]= new Thread(myQ);
+            threadsArr[threadsArr.length-1]=new Thread(myTimeService);
 
-            for (Thread anOof : oof) {
-                anOof.start();
+            for (Thread thread : threadsArr) {
+                thread.start();
             }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 //        todo: find sol for the waiting problem here
+        if (threadsArr!=null){
         try {
-            for (Thread thread : oof) {
+            for (Thread thread : threadsArr) {
                 thread.join();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
         }
         myInventory.printToFile(args[1]);
         Diary.getInstance().printToFile(args[2]);

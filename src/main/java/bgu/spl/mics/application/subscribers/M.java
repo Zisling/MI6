@@ -84,7 +84,6 @@ public class M extends Subscriber {
 							QTimeTick = getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
 							if (QTimeTick != null && QTimeTick.get() != -1 & tick.get() < mission.getTimeExpired() & tick.get() != -1) {
 								AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
-								System.out.println(AgentsNames.get());
 								if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
 									System.out.println("look at me " + AgentsNames.get() + " " + tick.get() + " M" + getName());
 									docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get(),mission.getDuration()));
@@ -102,7 +101,6 @@ public class M extends Subscriber {
 			}
 		});
 
-		// TODO Implement this
 
 	}
 

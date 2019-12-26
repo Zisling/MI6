@@ -74,7 +74,6 @@ public class Agent {
 //			TODO: see this to solve
 			while (!isAvailable()){
 				try {
-					System.out.println(name + "i am wating " + Thread.currentThread());
 					this.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -83,7 +82,6 @@ public class Agent {
 		}
 		synchronized (lock2){
 		if (isAvailable()){
-			System.out.println(name +" son of a bitch i am in "+ Thread.currentThread());
 			available_flag=false;
 		}
 		}
@@ -98,7 +96,6 @@ public class Agent {
 			synchronized (this){
 			this.notify();
 			}
-			System.out.println(name + " i am out");
 			}
 	}
 }

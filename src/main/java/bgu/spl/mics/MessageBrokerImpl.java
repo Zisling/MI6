@@ -67,8 +67,6 @@ public class MessageBrokerImpl implements MessageBroker {
 		Future futureToResolve=futureMessageMap.get(e);
 		if (futureToResolve!=null){
 			futureToResolve.resolve(result);
-		}else {
-			System.out.println("Resolve is null");
 		}
 		futureMessageMap.remove(e);
 	}
