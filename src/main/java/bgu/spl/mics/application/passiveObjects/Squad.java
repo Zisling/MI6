@@ -101,5 +101,13 @@ public class Squad {
 		}
 		return toRet;
     }
+/**
+ * gets the agents map
+ * @return the map of all the agents
+ * by hedi zisling
+ * */
 
+	public Map<String, Agent> getAgentsMap() {
+		return agents;
+	}
 }

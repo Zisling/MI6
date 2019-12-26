@@ -4,9 +4,15 @@ import bgu.spl.mics.Callback;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.Terminating;
+import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
 import bgu.spl.mics.application.Events.ReadyEvent;
+import bgu.spl.mics.application.passiveObjects.Agent;
 import bgu.spl.mics.application.passiveObjects.Squad;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Only this type of Subscriber can access the squad.
@@ -27,18 +33,8 @@ public class Moneypenny extends Subscriber {
 
 	@Override
 	protected void initialize() {
-		subscribeEvent(ReadyEvent.class, new Callback<ReadyEvent>() {
-			@Override
-			public void call(ReadyEvent c) {
-				if (c!=null){
-					System.out.println("Money sent");
-					mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
-					System.out.println("Money after sent");
-					complete(c, mySquad.getAgentsNames(c.getSerialAgentsNumbers()));
-				}
-				complete(c, null);
-			}
-		});
+
+		if(id!=0){
 		subscribeEvent(AgentAvailableEvent.class, new Callback<AgentAvailableEvent>() {
 			@Override
 			public void call(AgentAvailableEvent c) {
@@ -53,6 +49,8 @@ public class Moneypenny extends Subscriber {
 			}
 		});
 
+		}
+		if (id==0){
 		subscribeEvent(AbortBroadCast.class, new Callback<AbortBroadCast>() {
 			@Override
 			public void call(AbortBroadCast c) {
@@ -63,6 +61,30 @@ public class Moneypenny extends Subscriber {
 				complete(c, false);
 			}
 		});
+			subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
+				@Override
+				public void call(TickBroadcast c) {
+					if (c.getTimeTick().get()==-1){
+						Map<String, Agent> goHome=mySquad.getAgentsMap();
+						for (Agent value : goHome.values()) {
+							value.release();
+						}
+					}
+				}
+			});
+			subscribeEvent(ReadyEvent.class, new Callback<ReadyEvent>() {
+				@Override
+				public void call(ReadyEvent c) {
+					if (c!=null){
+						System.out.println("Money sent");
+						mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
+						System.out.println("Money after sent");
+						complete(c, mySquad.getAgentsNames(c.getSerialAgentsNumbers()));
+					}
+					complete(c, null);
+				}
+			});
+		}
 	}
 
 }

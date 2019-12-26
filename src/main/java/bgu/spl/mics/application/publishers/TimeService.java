@@ -56,7 +56,7 @@ public class TimeService extends Publisher {
 				else {
 					timeTick.set(-1); //value=-1 in order to stop a mission the runs
 					try {
-						Thread.sleep(speed*2);
+						Thread.sleep(speed);//one tick to Release all agent
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
