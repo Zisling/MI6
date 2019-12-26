@@ -69,6 +69,7 @@ public class Moneypenny extends Subscriber {
 						for (Agent value : goHome.values()) {
 							value.release();
 						}
+						terminate();
 					}
 				}
 			});
@@ -76,12 +77,9 @@ public class Moneypenny extends Subscriber {
 				@Override
 				public void call(ReadyEvent c) {
 					if (c!=null){
-						System.out.println("Money sent");
 						mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
-						System.out.println("Money after sent");
 						complete(c, mySquad.getAgentsNames(c.getSerialAgentsNumbers()));
 					}
-					complete(c, null);
 				}
 			});
 		}

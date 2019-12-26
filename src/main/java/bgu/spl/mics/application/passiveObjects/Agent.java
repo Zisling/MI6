@@ -71,7 +71,8 @@ public class Agent {
 	 */
 	public void acquire(){
 		synchronized (this){
-			if (!isAvailable()){
+//			TODO: see this to solve
+			while (!isAvailable()){
 				try {
 					System.out.println(name + "i am wating " + Thread.currentThread());
 					this.wait();

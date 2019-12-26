@@ -62,6 +62,7 @@ public class Diary {
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){
+		if (filename.length()-5>0&&filename.substring(filename.length()-5).equals(".json")){filename=filename.substring(0,filename.length()-5);}
 			try (Writer writer = new FileWriter(filename+".json")) {
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
 				gson.toJson(this, writer);

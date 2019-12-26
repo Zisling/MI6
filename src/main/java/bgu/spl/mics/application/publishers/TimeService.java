@@ -54,7 +54,14 @@ public class TimeService extends Publisher {
 					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 				}
 				else {
+					try {
+						Thread.sleep(speed);//one tick to Release all agent
+
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					timeTick.set(-1); //value=-1 in order to stop a mission the runs
+					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 					try {
 						Thread.sleep(speed);//one tick to Release all agent
 					} catch (InterruptedException e) {
