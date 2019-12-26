@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class Inventory {
 	private List<String> gadgets;
+	private static final Object lock = new Object();
 
 	//Inventory's default constructor
 	private Inventory(){}
@@ -57,15 +58,10 @@ public class Inventory {
      * @param gadget 		Name of the gadget to check if available
      * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
      */
-	public boolean getItem(String gadget){
-			for (String toCheck : gadgets) {
-				if (toCheck.equals(gadget)) {
-					gadgets.remove(toCheck);
-					return true;
-				}
-			}
-			return false;
-
+	public boolean getItem(String gadget) {
+		synchronized (lock) {
+			return gadgets.remove(gadget);
+		}
 	}
 
 	/**

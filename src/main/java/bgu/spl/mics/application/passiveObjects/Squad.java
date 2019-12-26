@@ -61,7 +61,9 @@ public class Squad {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		releaseAgents(serials);
+		for (String serial : serials) {
+			agents.get(serial).release();
+		}
 		}
 
 	/**

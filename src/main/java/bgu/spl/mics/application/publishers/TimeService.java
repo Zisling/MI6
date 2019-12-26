@@ -55,6 +55,11 @@ public class TimeService extends Publisher {
 				}
 				else {
 					timeTick.set(-1); //value=-1 in order to stop a mission the runs
+					try {
+						Thread.sleep(speed*2);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					getSimplePublisher().sendBroadcast(new Terminating());//Time's up, time to terminate the program.
 					clock.cancel();
 				}

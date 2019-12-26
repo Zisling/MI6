@@ -31,9 +31,12 @@ public class Moneypenny extends Subscriber {
 			@Override
 			public void call(ReadyEvent c) {
 				if (c!=null){
+					System.out.println("Money sent");
 					mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
+					System.out.println("Money after sent");
 					complete(c, mySquad.getAgentsNames(c.getSerialAgentsNumbers()));
 				}
+				complete(c, null);
 			}
 		});
 		subscribeEvent(AgentAvailableEvent.class, new Callback<AgentAvailableEvent>() {
@@ -50,12 +53,14 @@ public class Moneypenny extends Subscriber {
 			}
 		});
 
-		subscribeBroadcast(AbortBroadCast.class, new Callback<AbortBroadCast>() {
+		subscribeEvent(AbortBroadCast.class, new Callback<AbortBroadCast>() {
 			@Override
 			public void call(AbortBroadCast c) {
 				if (c!=null){
 					mySquad.releaseAgents(c.getAgentToRelease());
+					complete(c, true);
 				}
+				complete(c, false);
 			}
 		});
 	}

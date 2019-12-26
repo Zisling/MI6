@@ -53,7 +53,7 @@ public class M extends Subscriber {
 		myDiary.addReport(toDoc);
 	}
 	public void missionAbort(List<String> SerialAgentsNumbers){
-		getSimplePublisher().sendBroadcast(new AbortBroadCast(SerialAgentsNumbers));
+		getSimplePublisher().sendEvent(new ReadyEvent(0,SerialAgentsNumbers));
 	}
 
 	@Override
@@ -81,9 +81,13 @@ public class M extends Subscriber {
 						MissionInfo mission = c.getMission();
 						MoneyPennyId = getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
 						if (MoneyPennyId != null && MoneyPennyId.get()!=null&&MoneyPennyId.get() != -1 && MoneyPennyId.isDone() && tick.get() < mission.getTimeExpired() & tick.get() != -1) {
+							System.out.println("i am here 1");
 							QTimeTick = getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
 							if (QTimeTick != null && QTimeTick.get() != -1 & tick.get() < mission.getTimeExpired() & tick.get() != -1) {
+								System.out.println("i am here 2");
 								AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
+								System.out.println(AgentsNames.get());
+								System.out.println("i am here 3");
 								if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
 									System.out.println("look at me " + AgentsNames.get() + " " + tick.get() + " M" + getName());
 									docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get(),mission.getDuration()));

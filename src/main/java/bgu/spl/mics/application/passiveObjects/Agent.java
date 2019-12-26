@@ -12,6 +12,7 @@ public class Agent {
 	private String name;
 	private boolean available_flag;
 	private final Object lock = new Object();
+	private final Object lock2 = new Object();
 
 
 	//Agent Constructor
@@ -69,18 +70,22 @@ public class Agent {
 	 * Acquires an agent.
 	 */
 	public void acquire(){
-		synchronized (lock){
+		synchronized (this){
 			if (!isAvailable()){
 				try {
-					lock.wait();
+					System.out.println(name + "i am wating " + Thread.currentThread());
+					this.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		synchronized (lock2){
 		if (isAvailable()){
 			System.out.println(name +" son of a bitch i am in "+ Thread.currentThread());
-			available_flag=false;}
+			available_flag=false;
+		}
+		}
 	}
 
 	/**
@@ -89,8 +94,8 @@ public class Agent {
 	public void release(){
 			if (!isAvailable()){
 			available_flag=true;
-			synchronized (lock){
-			lock.notify();
+			synchronized (this){
+			this.notify();
 			}
 			System.out.println(name + " i am out");
 			}
