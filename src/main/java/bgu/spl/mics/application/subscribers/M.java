@@ -3,7 +3,6 @@ package bgu.spl.mics.application.subscribers;
 import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.Subscriber;
-import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
 import bgu.spl.mics.application.Events.GadgetAvailableEvent;
@@ -13,9 +12,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
 import bgu.spl.mics.application.passiveObjects.Report;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -34,7 +31,11 @@ public class M extends Subscriber {
 		id = Integer.parseInt(name);
 		myDiary = Diary.getInstance();
 	}
-
+	/**
+	 * crate A Report
+	 * @param missionName MoneyPenny Id , SerialNumbers of agents, AgentsNames , gadget Name , timeIssued , Qtime , and duration for time crated
+	 * @return Report
+	 **/
 	public Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime,int duration){
 		Report out = new Report();
 		out.setMissionName(missionName);
@@ -49,11 +50,41 @@ public class M extends Subscriber {
 		return out;
 	}
 
+	/**
+	 * add Report to the doc to myDiary
+	 * @param toDoc at myDiary
+	 * */
 	public void docReport(Report toDoc){
 		myDiary.addReport(toDoc);
 	}
+	/**
+	 * send a Event to Abort a Mission
+	 * Mission is Aborted can happen in two ways:
+	 * 1. start of termination before agents are ready
+	 * 2. the duration + current time is more then Mission TimeExpired
+	 * @param SerialAgentsNumbers is a List of Agents to release
+	* */
+
 	public void missionAbort(List<String> SerialAgentsNumbers){
 		getSimplePublisher().sendEvent(new ReadyEvent(0,SerialAgentsNumbers));
+	}
+
+	/**
+	* check if the program is Terminated
+	* @return the state of the Program
+	 * */
+	private boolean timeCheck(){
+		return tick.get() != -1;
+	}
+
+	/**
+	 * check if there is time for mission to be done
+	 * @param timeExpired is the time the mission expired
+	 * @param timeEnd the last tick + duration of the mission
+	 * @return if mission can be executed
+	 * */
+	private boolean isTimeExpired(int timeExpired ,int timeEnd){
+		return timeEnd<=timeExpired;
 	}
 
 	@Override
@@ -71,18 +102,18 @@ public class M extends Subscriber {
 			@Override
 			public void call(MissionReceviedEvent c) {
 				myDiary.incrementTotal();
-				if (tick.get()!=-1) {
+				int startTick = tick.get();
 					System.out.println(c.getMission().getName() + " " + c.getMission().getGadget() + " " + getName());
 					Future<Integer> MoneyPennyId = null;
 					Future<Integer> QTimeTick = null;
 					Future<List<String>> AgentsNames = null;
 					complete(c, null);
-					if (c.getMission().getTimeExpired() > tick.get()) {
-						MissionInfo mission = c.getMission();
+					MissionInfo mission = c.getMission();
+					if (isTimeExpired(mission.getTimeExpired(),startTick+mission.getDuration()) && timeCheck()) {
 						MoneyPennyId = getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
-						if (MoneyPennyId != null && MoneyPennyId.get()!=null&&MoneyPennyId.get() != -1 && MoneyPennyId.isDone() && tick.get() < mission.getTimeExpired() & tick.get() != -1) {
+						if (MoneyPennyId != null && MoneyPennyId.get()!=null&&MoneyPennyId.get() != -1 && MoneyPennyId.isDone() && timeCheck()) {
 							QTimeTick = getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
-							if (QTimeTick != null && QTimeTick.get() != -1 & tick.get() < mission.getTimeExpired() & tick.get() != -1) {
+							if (QTimeTick != null && QTimeTick.get() != -1 & isTimeExpired(mission.getTimeExpired(),QTimeTick.get()+mission.getDuration())& timeCheck()) {
 								AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
 								if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
 									System.out.println("look at me " + AgentsNames.get() + " " + tick.get() + " M" + getName());
@@ -97,7 +128,6 @@ public class M extends Subscriber {
 							missionAbort(mission.getSerialAgentsNumbers());
 						}
 					}
-				}
 			}
 		});
 

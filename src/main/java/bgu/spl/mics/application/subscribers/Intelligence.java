@@ -38,8 +38,8 @@ public class Intelligence extends Subscriber {
 			public void call(TickBroadcast c) {
 				Future<?> a= null;
 				if (c!=null){
-					int tick = c.getTimeTick().get();
-					if (MissionMap.containsKey(tick)){
+					int tick = c.getTick();
+					if (tick!=-1&&MissionMap.containsKey(tick)){
 						for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
 							MissionInfo toSend = MissionMap.get(tick).poll();
 							a=getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));
