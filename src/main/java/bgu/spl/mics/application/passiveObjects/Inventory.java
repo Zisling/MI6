@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class Inventory {
 	private List<String> gadgets;
-	private static Inventory instance;
+	private final static Inventory instance=new Inventory();
 
 	//Inventory's default constructor
 	private Inventory(){}
@@ -29,9 +29,6 @@ public class Inventory {
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
-		if(instance==null)
-			synchronized (Inventory.class){
-			if (instance==null){instance=new Inventory();}}
 		return instance;
 	}
 

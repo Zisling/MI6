@@ -2,7 +2,6 @@ package bgu.spl.mics.application;
 
 import bgu.spl.mics.MessageBroker;
 import bgu.spl.mics.MessageBrokerImpl;
-import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.publishers.TimeService;
 import bgu.spl.mics.application.subscribers.Intelligence;
@@ -77,8 +76,8 @@ public class MI6Runner {
             oof[oof.length-1]=new Thread(myTimeService);
             oof[oof.length-2]= new Thread(myQ);
 
-            for (int i = 0; i < oof.length; i++) {
-                oof[i].start();
+            for (Thread anOof : oof) {
+                anOof.start();
             }
 
         } catch (FileNotFoundException e) {
