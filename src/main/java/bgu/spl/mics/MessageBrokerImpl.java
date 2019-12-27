@@ -1,11 +1,9 @@
 package bgu.spl.mics;
 
 
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.Terminating;
@@ -19,12 +17,14 @@ import bgu.spl.mics.application.subscribers.Q;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBrokerImpl implements MessageBroker {
-	private static MessageBroker instance;
 	private ConcurrentHashMap<Class<? extends Event<?>>, ConcurrentLinkedQueue<Subscriber>> eventMap;
 	private ConcurrentHashMap<Class<? extends Broadcast>, ConcurrentLinkedQueue<Subscriber>> broadcastMap;
 	private ConcurrentHashMap<Subscriber,ConcurrentLinkedQueue<Message>> subMap;
 	private ConcurrentHashMap<Event,Future> futureMessageMap;
 	private Q MyQ;
+	private Semaphore EventSem=new Semaphore(1);
+	private Semaphore BroadSem=new Semaphore(1);
+
 
 	//	constructor
 	private MessageBrokerImpl(){
@@ -33,33 +33,60 @@ public class MessageBrokerImpl implements MessageBroker {
 		subMap = new ConcurrentHashMap<>();
 		futureMessageMap=new ConcurrentHashMap<>();
 
-		broadcastMap.put(TickBroadcast.class,new ConcurrentLinkedQueue<>());
-		broadcastMap.put(Terminating.class,new ConcurrentLinkedQueue<>());
-		eventMap.put(AbortBroadCast.class,new ConcurrentLinkedQueue<>());
-		eventMap.put(AgentAvailableEvent.class,new ConcurrentLinkedQueue<>());
-		eventMap.put(MissionReceviedEvent.class,new ConcurrentLinkedQueue<>());
-		eventMap.put(GadgetAvailableEvent.class,new ConcurrentLinkedQueue<>());
-		eventMap.put(ReadyEvent.class,new ConcurrentLinkedQueue<>());
+//		broadcastMap.put(TickBroadcast.class,new ConcurrentLinkedQueue<>());
+//		broadcastMap.put(Terminating.class,new ConcurrentLinkedQueue<>());
+//		eventMap.put(AbortBroadCast.class,new ConcurrentLinkedQueue<>());
+//		eventMap.put(AgentAvailableEvent.class,new ConcurrentLinkedQueue<>());
+//		eventMap.put(MissionReceviedEvent.class,new ConcurrentLinkedQueue<>());
+//		eventMap.put(GadgetAvailableEvent.class,new ConcurrentLinkedQueue<>());
+//		eventMap.put(ReadyEvent.class,new ConcurrentLinkedQueue<>());
 	}
 
+	private static class MessageBrokerImpHolder{
+		private static final MessageBrokerImpl instance =new MessageBrokerImpl();
+	}
 	/**
 	 * Retrieves the single instance of this class.
 	 */
 	public static MessageBroker getInstance() {
-		if(instance==null){
-			synchronized (MessageBrokerImpl.class){
-		if (instance==null){instance=new MessageBrokerImpl();}}}
-		return instance;
+		return MessageBrokerImpHolder.instance;
 	}
 
 	@Override
-	public <T> void subscribeEvent(Class<? extends Event<T>> type, Subscriber m) {
-		eventMap.get(type).add(m);
+	public <T> void subscribeEvent(Class<? extends Event<T>> type, Subscriber m){
+		if(!eventMap.containsKey(type)) {
+			try {
+				EventSem.acquire();
+				eventMap.put(type, new ConcurrentLinkedQueue<>());
+				eventMap.get(type).add(m);
+			} catch (Exception e) {
+			} finally {
+				EventSem.release();
+			}
+		}
+		else
+		{
+			eventMap.get(type).add(m);
+		}
+
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, Subscriber m) {
+		if(!broadcastMap.containsKey(type)) {
+			try {
+				BroadSem.acquire();
+				broadcastMap.put(type, new ConcurrentLinkedQueue<>());
+				broadcastMap.get(type).add(m);
+			} catch (Exception e) {
+			} finally {
+				BroadSem.release();
+			}
+		}
+		else
+		{
 			broadcastMap.get(type).add(m);
+		}
 	}
 
 	@Override
@@ -87,14 +114,11 @@ public class MessageBrokerImpl implements MessageBroker {
 			}
 		}
 
-		// TODO Auto-generated method stub
-
 	}
 
 	
 	@Override
 	public  <T> Future<T> sendEvent(Event<T> e) {
-		// TODO Auto-generated method stub
 		Future<T> futureOut=null;
 		ConcurrentLinkedQueue<Subscriber> roundRobinQ=eventMap.get(e.getClass());
 		Subscriber currSub=null;
@@ -154,7 +178,6 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public Message awaitMessage(Subscriber m) throws InterruptedException {
-		// TODO Auto-generated method stub
 		ConcurrentLinkedQueue<Message> subMessagelist=subMap.get(m);
 		if(subMessagelist.isEmpty())
 		{

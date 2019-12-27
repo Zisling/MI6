@@ -30,6 +30,7 @@ public class Diary {
 	{
 		private static final Diary instance=new Diary();
 	}
+
 	/**
 	 * Retrieves the single instance of this class.
 	 */
