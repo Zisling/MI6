@@ -107,9 +107,17 @@ public class MessageBrokerImpl implements MessageBroker {
 		ConcurrentLinkedQueue<Subscriber> roundRobinQ=eventMap.get(e.getClass());
 		Subscriber currSub=null;
 		synchronized (eventMap.get(e.getClass())){
-		if (!roundRobinQ.isEmpty()){
+			while (roundRobinQ.isEmpty()){
+				try {
+					eventMap.get(e.getClass()).wait();
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				}
+			}
 			currSub=roundRobinQ.poll();
-			roundRobinQ.add(currSub);}}
+			roundRobinQ.add(currSub);
+			eventMap.get(e.getClass()).notifyAll();
+		}
 			if(currSub!=null) {
 				try {
 				if (subMap.containsKey(currSub)){
@@ -119,17 +127,10 @@ public class MessageBrokerImpl implements MessageBroker {
 				}
 				synchronized (currSub){
 				currSub.notifyAll();}
-			}catch (Exception m){m.printStackTrace();}
+			}catch (Exception m){
+					System.out.println(m.getMessage());
+				}
 		}
-			else {
-				if (e.getClass()==GadgetAvailableEvent.class){
-					subMap.get(MyQ).add(e);
-					futureOut=new Future<>();
-					futureMessageMap.put(e,futureOut);
-					synchronized (MyQ){
-						MyQ.notifyAll();}
-			}
-			}
 		return futureOut;
 	}
 
