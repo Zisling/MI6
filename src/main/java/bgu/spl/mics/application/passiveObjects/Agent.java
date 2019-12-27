@@ -11,8 +11,7 @@ public class Agent {
 	private String serialNumber;
 	private String name;
 	private boolean available_flag;
-	private final Object lock = new Object();
-	private final Object lock2 = new Object();
+	private final Object Lock = new Object();
 
 
 	//Agent Constructor
@@ -80,7 +79,7 @@ public class Agent {
 				}
 			}
 		}
-		synchronized (lock2){
+		synchronized (Lock){
 		if (isAvailable()){
 			available_flag=false;
 		}

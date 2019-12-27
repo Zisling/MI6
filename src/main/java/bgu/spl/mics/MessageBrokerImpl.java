@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import bgu.spl.mics.application.Events.*;
-import bgu.spl.mics.application.subscribers.Moneypenny;
 import bgu.spl.mics.application.subscribers.Q;
 
 /**
@@ -135,6 +134,7 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public void register(Subscriber m) {
+		
 		if(!subMap.containsKey(m))
 		subMap.put(m, new ConcurrentLinkedQueue<>());
 
@@ -155,16 +155,11 @@ public class MessageBrokerImpl implements MessageBroker {
 			for (Class<? extends Broadcast> aClass : broadcastMap.keySet()) {
 				if(broadcastMap.get(aClass).contains(m))
 				{
-					unSubscriveFromBroadcasts(aClass,m);
+					unsubscribeFromBroadcasts(aClass,m);
 				}
 
 			}
 			synchronized (m) {
-				System.out.println(subMap.get(m).isEmpty());
-				System.out.println(m.getName()+" "+m.getClass());
-				if(m.getClass()== Moneypenny.class){
-					System.out.println("debuge");
-				}
 				subMap.remove(m);
 			}
 		}
@@ -176,7 +171,7 @@ public class MessageBrokerImpl implements MessageBroker {
 			eventMap.get(eventClass).remove(subToUnregister);
 		}
 	}
-	private void unSubscriveFromBroadcasts(Class broadClass,Subscriber subToUnregister)
+	private void unsubscribeFromBroadcasts(Class broadClass,Subscriber subToUnregister)
 	{
 		synchronized (broadcastMap.get(broadClass))
 		{
@@ -187,7 +182,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public Message awaitMessage(Subscriber m) throws InterruptedException {
 		ConcurrentLinkedQueue<Message> subMessagelist=subMap.get(m);
-		while(subMessagelist.isEmpty())
+		if(subMessagelist.isEmpty())
 		{
 			synchronized (m)
 			{
@@ -197,6 +192,6 @@ public class MessageBrokerImpl implements MessageBroker {
 		return subMessagelist.poll();
 	}
 
-	
+
 
 }

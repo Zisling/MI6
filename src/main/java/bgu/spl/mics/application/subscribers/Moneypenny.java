@@ -3,15 +3,12 @@ package bgu.spl.mics.application.subscribers;
 import bgu.spl.mics.Callback;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
-import bgu.spl.mics.application.Broadcasts.Terminating;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
 import bgu.spl.mics.application.Events.ReadyEvent;
 import bgu.spl.mics.application.passiveObjects.Agent;
 import bgu.spl.mics.application.passiveObjects.Squad;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
