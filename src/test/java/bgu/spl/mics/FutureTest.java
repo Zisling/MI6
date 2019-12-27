@@ -21,11 +21,6 @@ public class FutureTest {
     public void tearDown(){
         toTest=null;
     }
-    @Test
-    public void test(){
-        //TODO: change this test and add more tests :)
-        fail("Not a good test");
-    }
 
     @Test
     void get_resolved() {
@@ -41,8 +36,8 @@ public class FutureTest {
     @Test
     void get_unresolved(){
         try {
-            toTest.get();
-            fail("Should throw Exception");
+            toTest.get(5,TimeUnit.MILLISECONDS);
+            assertTrue(!toTest.isDone());
         }
         catch (IllegalStateException e)
         {
@@ -80,19 +75,7 @@ public class FutureTest {
         }
     }
 
-    @Test
-    void testGetTime_fail() {
-        try {
-            assertNull(toTest.get(5000, TimeUnit.MILLISECONDS));
-            assertTimeout(Duration.ofMillis(6000),()->{
-                toTest.get(5000,TimeUnit.MILLISECONDS);
-            });
-            fail("Should throw exception");
-        } catch (Exception e){
-            assertTrue(true);
-        }
 
-    }
     @Test
     void testGetTime_succeed(){
         try{

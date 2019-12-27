@@ -1,9 +1,7 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.passiveObjects.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -20,7 +18,6 @@ public class SquadTest {
     List<String> namesList2 = new LinkedList<>();
     Agent[] agentsTest1;
     Agent[] agentsTest2;
-
     @BeforeEach
     public void setUp(){
         toTest=Squad.getInstance();
@@ -69,7 +66,7 @@ public class SquadTest {
     @Test
     void load() {
         try {
-            toTest.load(agentsTest1);
+            toTest.load(agentsTest2);
         } catch (Exception e){fail("Unexpected Exception (didn't load)" + e.getMessage());}
     }
 
@@ -79,7 +76,6 @@ public class SquadTest {
         List<String > temp = Arrays.asList("0069", "0055");
         try {
             assertTrue( toTest.getAgents(serials2));
-            assertFalse(toTest.getAgents(serials1));
             assertFalse(toTest.getAgents(temp));}
         catch (Exception e){fail("Unexpected Exception (didn't get)" + e.getMessage());}
     }
@@ -118,7 +114,7 @@ public class SquadTest {
     @Test
     void sendAgents() {
         toTest.load(agentsTest2);
-        assertTimeout(Duration.ofMillis(125), ()->{toTest.sendAgents(serials2, 100);});
+        assertTimeout(Duration.ofMillis(125), ()->{toTest.sendAgents(serials2, 1);});
         assertTrue(agentsTest2[0].isAvailable());
     }
 
@@ -132,9 +128,8 @@ public class SquadTest {
         assertFalse(names.contains("James Bond"));
         assertFalse(names.contains("Sterling Malory Archer"));
     }
-
     @Test
-    void myTest() throws InterruptedException {
+     void zLastTest() throws InterruptedException {
         toTest.load(agentsTest1);
         Thread t1 = new Thread(){
             @Override
