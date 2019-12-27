@@ -13,6 +13,7 @@ import bgu.spl.mics.application.passiveObjects.MissionInfo;
 import bgu.spl.mics.application.passiveObjects.Report;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,11 +26,13 @@ public class M extends Subscriber {
 	private Diary myDiary;
 	private int id;
 	private AtomicInteger tick;
+	private CountDownLatch latch;
 
-	public M(String name) {
+	public M(String name,CountDownLatch latch) {
 		super(name);
 		id = Integer.parseInt(name);
 		myDiary = Diary.getInstance();
+		this.latch=latch;
 	}
 	/**
 	 * crate A Report
@@ -131,7 +134,7 @@ public class M extends Subscriber {
 			}
 		});
 
-
+		latch.countDown();
 	}
 
 }

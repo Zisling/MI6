@@ -7,6 +7,7 @@ import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.GadgetAvailableEvent;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,10 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Q extends Subscriber {
 	Inventory myInventory;
 	AtomicInteger tick;
-	public Q(String name) {
+	private CountDownLatch latch;
+	public Q(String name,CountDownLatch latch) {
 		super(name);
 		myInventory=Inventory.getInstance();
 		tick=new AtomicInteger(0);
+		this.latch=latch;
 	}
 
 	@Override
@@ -47,8 +50,6 @@ public class Q extends Subscriber {
 					}
 				}
 			}});
-
-		
+		latch.countDown();
 	}
-
 }

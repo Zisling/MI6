@@ -9,6 +9,7 @@ import bgu.spl.mics.application.passiveObjects.MissionInfo;
 
 import java.util.HashMap;
 import java.util.Queue;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * A Publisher\Subscriber.
@@ -18,16 +19,17 @@ import java.util.Queue;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Intelligence extends Subscriber {
-	HashMap<Integer, Queue<MissionInfo>> MissionMap;
-
+	private HashMap<Integer, Queue<MissionInfo>> MissionMap;
+	private CountDownLatch latch;
 
 	public Intelligence() {
 		super("default");
 	}
 
-	public Intelligence(String name, HashMap<Integer, Queue<MissionInfo>> MissionMap) {
+	public Intelligence(String name, HashMap<Integer, Queue<MissionInfo>> MissionMap,CountDownLatch latch) {
 		super(name);
 		this.MissionMap = MissionMap;
+		this.latch=latch;
 	}
 
 	@Override
@@ -48,5 +50,6 @@ public class Intelligence extends Subscriber {
 				}
 			}
 		});
+		latch.countDown();
 	}
 }
