@@ -57,9 +57,13 @@ public class MessageBrokerImpl implements MessageBroker {
 		if(!eventMap.containsKey(type)) {
 			try {
 				EventSem.acquire();
-				eventMap.put(type, new ConcurrentLinkedQueue<>());
-				eventMap.get(type).add(m);
+				if(!eventMap.containsKey(type)) {
+					System.out.println(type+" 675");
+					eventMap.put(type, new ConcurrentLinkedQueue<>());
+					eventMap.get(type).add(m);
+				}
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				EventSem.release();
 			}
@@ -76,9 +80,13 @@ public class MessageBrokerImpl implements MessageBroker {
 		if(!broadcastMap.containsKey(type)) {
 			try {
 				BroadSem.acquire();
-				broadcastMap.put(type, new ConcurrentLinkedQueue<>());
-				broadcastMap.get(type).add(m);
+				if (!broadcastMap.containsKey(type)) {
+					System.out.println(type+" 645");
+					broadcastMap.put(type, new ConcurrentLinkedQueue<>());
+					broadcastMap.get(type).add(m);
+				}
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				BroadSem.release();
 			}
