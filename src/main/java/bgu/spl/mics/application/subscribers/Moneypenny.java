@@ -67,12 +67,11 @@ public class Moneypenny extends Subscriber {
 			subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
 				@Override
 				public void call(TickBroadcast c) {
-					if (c.getTimeTick().get()==-1){
+					if (c.getTick()==-1){
 						Map<String, Agent> goHome=mySquad.getAgentsMap();
 						for (Agent value : goHome.values()) {
 							value.release();
 						}
-						terminate();
 					}
 				}
 			});
