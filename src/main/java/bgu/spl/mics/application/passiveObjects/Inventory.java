@@ -22,7 +22,9 @@ public class Inventory {
 	private List<String> gadgets;
 	private static final Object lock = new Object();
 
-	//Inventory's default constructor
+	/**
+	 * Inventory's Constructor.
+	 */
 	private Inventory(){}
 
 	/**

@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.subscribers;
 
 import bgu.spl.mics.Subscriber;
-import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
+import bgu.spl.mics.application.Events.AbortEvent;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.AgentAvailableEvent;
 import bgu.spl.mics.application.Events.ReadyEvent;
@@ -22,6 +22,12 @@ public class Moneypenny extends Subscriber {
 	private int id;
 	private Squad mySquad;
 	private CountDownLatch latch;
+
+	/**
+	 * Money penny's Constructor
+	 * @param name-Number Id of this Money Penny.
+	 * @param latch-initializing latch in order to start the program after the initialisation phase is done.
+	 */
 	public Moneypenny(String name,CountDownLatch latch) {
 		super(name);
 		id=Integer.parseInt(name);
@@ -48,7 +54,7 @@ public class Moneypenny extends Subscriber {
 		}
 //		different type of Monneypenny to releaseAgents
 		if (id%2==0){
-//			one Monneypenny to close the program and release all the agent when the programs is terminated
+//			one Unique Monneypenny to close the program and release all the agent when the programs is terminated
 			if (id==0){
 			subscribeBroadcast(TickBroadcast.class, c -> {
 				if (c.getTick()==-1){
@@ -59,7 +65,7 @@ public class Moneypenny extends Subscriber {
 				}
 			});
 			}
-			subscribeEvent(AbortBroadCast.class, c -> {
+			subscribeEvent(AbortEvent.class, c -> {
 			if (c!=null){
 				mySquad.releaseAgents(c.getAgentToRelease());
 				complete(c, true);

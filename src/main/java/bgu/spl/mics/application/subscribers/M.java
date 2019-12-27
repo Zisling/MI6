@@ -27,17 +27,30 @@ public class M extends Subscriber {
 	private AtomicInteger tick;
 	private CountDownLatch latch;
 
+	/**
+	 * M's Constructor
+	 * @param name-number Id of M.
+	 * @param latch-initializing latch in order to start the program after the initialisation phase is done.
+	 */
 	public M(String name,CountDownLatch latch) {
 		super(name);
 		id = Integer.parseInt(name);
 		myDiary = Diary.getInstance();
 		this.latch=latch;
 	}
+
 	/**
-	 * crate A Report
-	 * @param missionName MoneyPenny Id , SerialNumbers of agents, AgentsNames , gadget Name , timeIssued , Qtime , and duration for time crated
-	 * @return Report
-	 **/
+	 * Creates a Report of a specific Mission that is Executed successfully.
+	 * @param missionName-Mission name of a Mission that was Executed Successfully.
+	 * @param MoneyPenny-Money penny's Id that handled assigning Agents to the Mission.
+	 * @param SerialNumber-List of Serial numbers of agents that was sent on this Mission.
+	 * @param AgentsNames-List of the Names of agents that was sent on this Mission.
+	 * @param gadgetName-The Name of the gadget that the agents used in the Mission.
+	 * @param timeIssued-The time of Issuing the Mission to M.
+	 * @param QTime-The time that Q has gotten a GadgetAvailableEvent request.
+	 * @param duration-The time to Execute the Mission,if passed and Mission is yet to Complete, it is Aborted.
+	 * @return out -The Complete report of the Mission with all of the Information stated above.
+	 */
 	private Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime,int duration){
 		Report out = new Report();
 		out.setMissionName(missionName);
@@ -53,37 +66,39 @@ public class M extends Subscriber {
 	}
 
 	/**
-	 * add Report to the doc to myDiary
-	 * @param toDoc at myDiary
-	 * */
+	 * Adds a completed report to the Diary.
+	 * @param toDoc-a Report to add to the Diary.
+	 */
+
 	private void docReport(Report toDoc){
 		myDiary.addReport(toDoc);
 	}
+
 	/**
-	 * send a Event to Abort a Mission
-	 * Mission is Aborted can happen in two ways:
-	 * 1. start of termination before agents are ready
-	 * 2. the duration + current time is more then Mission TimeExpired
-	 * @param SerialAgentsNumbers is a List of Agents to release
-	* */
+	 * Sends an Event to abort a Mission
+	 * Mission abortion may happen according to the two following reasons:
+	 * 1. Start of Program Termination before agents are ready.
+	 * 2. The duration+current time is Greater the Mission's TimeExpired.
+	 * @param SerialAgentsNumbers-List of Serial numbers of the agents to release due to abortion of a Mission.
+	 */
 
 	private void missionAbort(List<String> SerialAgentsNumbers){
 		getSimplePublisher().sendEvent(new ReadyEvent(0,SerialAgentsNumbers));
 	}
 
 	/**
-	* check if the program is Terminated
-	* @return the state of the Program
+	* a Check if the Program is in Termination Phase.
+	* @return the State of the Program (Terminating or Running).
 	 * */
 	private boolean timeCheck(){
 		return tick.get() != -1;
 	}
 
 	/**
-	 * check if there is time for mission to be done
-	 * @param timeExpired is the time the mission expired
-	 * @param timeEnd the last tick + duration of the mission
-	 * @return if mission can be executed
+	 * Checks if the time of the Mission hasn't expired yet.
+	 * @param timeExpired Expiration time of the Mission handled.
+	 * @param timeEnd the last tick + duration of the Mission.
+	 * @return if Handled Mission can be Executed.
 	 * */
 	private boolean isTimeExpired(int timeExpired ,int timeEnd){
 		return timeEnd<=timeExpired;

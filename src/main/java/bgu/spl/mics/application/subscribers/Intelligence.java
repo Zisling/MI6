@@ -20,10 +20,19 @@ public class Intelligence extends Subscriber {
 	private HashMap<Integer, Queue<MissionInfo>> MissionMap;
 	private CountDownLatch latch;
 
+	/**
+	 * Default Constructor of Intelligence
+	 */
 	public Intelligence() {
 		super("default");
 	}
 
+	/**
+	 * Intelligence's Constructor.
+	 * @param name-number Id of Intelligence.
+	 * @param MissionMap-Contains missions of Intelligence.
+	 * @param latch-initializing latch in order to start the program after the initialisation phase is done.
+	 */
 	public Intelligence(String name, HashMap<Integer, Queue<MissionInfo>> MissionMap,CountDownLatch latch) {
 		super(name);
 		this.MissionMap = MissionMap;
@@ -39,7 +48,11 @@ public class Intelligence extends Subscriber {
 				if (tick!=-1&&MissionMap.containsKey(tick)){
 					for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
 						MissionInfo toSend = MissionMap.get(tick).poll();
-						getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));
+						try {
+							getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));
+						}catch (NullPointerException e){
+							System.out.println(e.getMessage());
+						}
 					}
 				}
 			}

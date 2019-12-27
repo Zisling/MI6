@@ -23,7 +23,9 @@ public class MessageBrokerImpl implements MessageBroker {
 	private Semaphore BroadSem=new Semaphore(1);
 
 
-	//	MessageBrokerImpl's Constructor
+	/**
+	 * MessageBrokerImpl's Constructor
+	 */
 	private MessageBrokerImpl(){
 		eventMap = new ConcurrentHashMap<>();
 		broadcastMap = new ConcurrentHashMap<>();
@@ -108,7 +110,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	public  <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> futureOut=null;
 		ConcurrentLinkedQueue<Subscriber> roundRobinQ=eventMap.get(e.getClass());
-		Subscriber currSub=null;
+		Subscriber currSub;
 		synchronized (eventMap.get(e.getClass())){
 			while (roundRobinQ.isEmpty()){
 				try {

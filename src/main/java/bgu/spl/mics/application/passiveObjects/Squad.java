@@ -11,7 +11,9 @@ public class Squad {
 	private Map<String, Agent> agents;
 	private static Squad instance;
 
-	//Squad Constructor
+	/**
+	 * Squad's Constructor.
+	 */
 	private Squad(){
 		agents = new HashMap<>();
 	}

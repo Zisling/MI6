@@ -24,13 +24,19 @@ public class TimeService extends Publisher {
 	private AtomicInteger timeTick;
 	private Timer clock;
 
-	//Default Constructor of TimeService
+	/**
+	 * Default Constructor of TimeService.
+ 	 */
 	public TimeService() {
 		super("Clock");
 		timeTick =new AtomicInteger(0);
 		ProgramTime = 1000;
 	}
-	//TimeService's Constructor
+
+	/**
+	 * Constructor of TimeService
+ 	 * @param time-Termination time of the Program.
+	 */
 	public TimeService(int time) {
 		super("Clock");
 		timeTick =new AtomicInteger(0);
@@ -47,10 +53,11 @@ public class TimeService extends Publisher {
 				do {
 					val=timeTick.get();
 				}while (!timeTick.compareAndSet(val,val+1));
-				System.out.println(timeTick);
+				//if the program is still allowed to run send TickBroadcast.
 				if (timeTick.get()<ProgramTime){
 					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));
 				}
+				//else start Termination of program.
 				else {
 					timeTick.set(-1); //value=-1 in order to stop a mission the runs
 					getSimplePublisher().sendBroadcast(new TickBroadcast(timeTick));

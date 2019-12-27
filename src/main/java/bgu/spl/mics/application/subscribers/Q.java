@@ -18,6 +18,12 @@ public class Q extends Subscriber {
 	private Inventory myInventory;
 	private AtomicInteger tick;
 	private CountDownLatch latch;
+
+	/**
+	 * Constructor of Q.
+	 * @param name-Name of Q-Q.
+	 * @param latch-initializing latch in order to start the program after the initialisation phase is done.
+	 */
 	public Q(String name,CountDownLatch latch) {
 		super(name);
 		myInventory=Inventory.getInstance();

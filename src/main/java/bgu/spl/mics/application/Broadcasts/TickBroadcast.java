@@ -4,6 +4,9 @@ import bgu.spl.mics.Broadcast;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Broadcast that represent the program time.
+ */
 public class TickBroadcast implements Broadcast{
     private AtomicInteger TimeTicker;
     private int Tick;
