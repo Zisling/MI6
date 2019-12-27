@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.subscribers;
 
-import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
@@ -101,7 +100,6 @@ public class M extends Subscriber {
 		subscribeEvent(MissionReceviedEvent.class, c -> {
 			myDiary.incrementTotal();
 			int startTick = tick.get();
-				System.out.println(c.getMission().getName() + " " + c.getMission().getGadget() + " " + getName());
 				Future<Integer> MoneyPennyId;
 				Future<Integer> QTimeTick;
 				Future<List<String>> AgentsNames;
@@ -114,7 +112,6 @@ public class M extends Subscriber {
 						if (QTimeTick != null && QTimeTick.get() != -1 & isTimeExpired(mission.getTimeExpired(),QTimeTick.get()+mission.getDuration())& timeCheck()) {
 							AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
 							if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
-								System.out.println("look at me " + AgentsNames.get() + " " + tick.get() + " M" + getName());
 								docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get(),mission.getDuration()));
 							} else {
 								missionAbort(mission.getSerialAgentsNumbers());

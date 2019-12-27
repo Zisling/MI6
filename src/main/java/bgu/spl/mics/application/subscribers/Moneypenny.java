@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.subscribers;
 
-import bgu.spl.mics.Callback;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.Broadcasts.AbortBroadCast;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;

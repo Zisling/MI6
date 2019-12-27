@@ -23,7 +23,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	private Semaphore BroadSem=new Semaphore(1);
 
 
-	//	constructor
+	//	MessageBrokerImpl's Constructor
 	private MessageBrokerImpl(){
 		eventMap = new ConcurrentHashMap<>();
 		broadcastMap = new ConcurrentHashMap<>();
@@ -31,6 +31,9 @@ public class MessageBrokerImpl implements MessageBroker {
 		futureMessageMap=new ConcurrentHashMap<>();
 	}
 
+	/**
+	 * Holder class of the singleton instance of MessageBroker
+	 */
 	private static class MessageBrokerImpHolder{
 		private static final MessageBrokerImpl instance =new MessageBrokerImpl();
 	}

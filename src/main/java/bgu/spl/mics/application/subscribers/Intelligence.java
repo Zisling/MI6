@@ -1,7 +1,5 @@
 package bgu.spl.mics.application.subscribers;
 
-import bgu.spl.mics.Callback;
-import bgu.spl.mics.Future;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.MissionReceviedEvent;

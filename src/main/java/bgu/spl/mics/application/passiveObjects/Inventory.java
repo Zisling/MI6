@@ -25,7 +25,9 @@ public class Inventory {
 	//Inventory's default constructor
 	private Inventory(){}
 
-	//Holds the singleton instance of Inventory
+	/**
+	 * Holder class of the singleton instance of Inventory
+	 */
 	private static class InventoryHolder{
 		private static final Inventory instance=new Inventory();
 	}

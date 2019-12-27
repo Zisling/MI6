@@ -26,6 +26,9 @@ public class Diary {
 		total= new AtomicInteger(0);
 	}
 
+    /**
+     * Holder class of the singleton instance of Diary
+     */
 	private static class DiaryHolder
 	{
 		private static final Diary instance=new Diary();
