@@ -32,8 +32,8 @@ public class Moneypenny extends Subscriber {
 
 	@Override
 	protected void initialize() {
-
-		if(id!=0){
+//		Monneypenny for Getting Agents for missions
+		if(id%2==1){
 		subscribeEvent(AgentAvailableEvent.class, c -> {
 			if (c!=null){
 				if (mySquad.getAgents(c.getSerialAgentsNumbers())){
@@ -46,14 +46,10 @@ public class Moneypenny extends Subscriber {
 		});
 
 		}
-		if (id==0){
-		subscribeEvent(AbortBroadCast.class, c -> {
-			if (c!=null){
-				mySquad.releaseAgents(c.getAgentToRelease());
-				complete(c, true);
-			}
-			complete(c, false);
-		});
+//		different type of Monneypenny to releaseAgents
+		if (id%2==0){
+//			one Monneypenny to close the program and release all the agent when the programs is terminated
+			if (id==0){
 			subscribeBroadcast(TickBroadcast.class, c -> {
 				if (c.getTick()==-1){
 					Map<String, Agent> goHome=mySquad.getAgentsMap();
@@ -62,6 +58,14 @@ public class Moneypenny extends Subscriber {
 					}
 				}
 			});
+			}
+			subscribeEvent(AbortBroadCast.class, c -> {
+			if (c!=null){
+				mySquad.releaseAgents(c.getAgentToRelease());
+				complete(c, true);
+			}
+			complete(c, false);
+		});
 			subscribeEvent(ReadyEvent.class, c -> {
 				if (c!=null){
 					mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
