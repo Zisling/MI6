@@ -32,31 +32,33 @@ public class MI6Runner {
         Thread[] threadsArr=null;
 
         try {
+//            start reader
             JsonReader read = new JsonReader(new FileReader(args[0]));
             JsonObject inputJson = gson.fromJson(read, JsonObject.class);
-//            load inventory
+//            get all json object need
+
+//            load inventory Gadgets
             String [] inventoryGadget =gson.fromJson(inputJson.get("inventory"), String[].class);
             myInventory.load(inventoryGadget);
-//            load agents
+//            load squad agents
             Agent[] squad = gson.fromJson(inputJson.get("squad"), Agent[].class);
             mySquad.load(squad);
-//            go to json services
+//            get services json object
             JsonObject services = gson.fromJson(inputJson.get("services"), JsonObject.class);
-//            crate timeService
+//            get ProgramTime and crate timeService
             TimeService myTimeService = new TimeService(services.get("time").getAsInt());
-//            crate Q
-//            crate M's
+//            calculate numbers of sunPubs needed
             int numberOfM = services.get("M").getAsInt();
             int numberOfMoneypenny = services.get("Moneypenny").getAsInt();
-            //            crate Intelligence subs
             JsonArray myIntelligence = gson.fromJson(services.get("intelligence"), JsonArray.class);
             Intelligence[] intelligenceArr= new Intelligence[myIntelligence.size()];
             M[] MArr = new M[numberOfM];
             int numbersOfSubPub =numberOfM+numberOfMoneypenny+myIntelligence.size()+2;
+//            crate latch for starting time Service after all subs are initialized
             CountDownLatch latch = new CountDownLatch(numbersOfSubPub-1);
+//            crate subs and
             Q myQ = new Q("Q",latch);
             Moneypenny[] MoneypennyArr = new Moneypenny[numberOfMoneypenny];
-//            crate M
             for (int i = 0; i < numberOfM; i++) {
                 MArr[i]= new M(Integer.toString(i),latch);
             }
@@ -95,6 +97,7 @@ public class MI6Runner {
             for (int i = 0; i < threadsArr.length-1; i++) {
                 threadsArr[i].start();
             }
+//            wait for all subs to initialize then start timeServices
             try {
                 latch.await();
             } catch (InterruptedException e) {
@@ -106,7 +109,6 @@ public class MI6Runner {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-//        todo: find sol for the waiting problem here
         if (threadsArr!=null){
         try {
             for (Thread thread : threadsArr) {
@@ -117,6 +119,6 @@ public class MI6Runner {
         }
         }
         myInventory.printToFile(args[1]);
-        Diary.getInstance().printToFile(args[2]);
+        mydiary.printToFile(args[2]);
     }
 }
