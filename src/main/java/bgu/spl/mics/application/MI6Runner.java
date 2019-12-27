@@ -56,7 +56,7 @@ public class MI6Runner {
             int numbersOfSubPub =numberOfM+numberOfMoneypenny+myIntelligence.size()+2;
 //            crate latch for starting time Service after all subs are initialized
             CountDownLatch latch = new CountDownLatch(numbersOfSubPub-1);
-//            crate subs and
+//            crate subs and pubs
             Q myQ = new Q("Q",latch);
             Moneypenny[] MoneypennyArr = new Moneypenny[numberOfMoneypenny];
             for (int i = 0; i < numberOfM; i++) {
@@ -66,7 +66,6 @@ public class MI6Runner {
             for (int i = 0; i < numberOfMoneypenny; i++) {
                 MoneypennyArr[i]= new Moneypenny(Integer.toString(i),latch);
             }
-
 //            crate MissionInfo
             for (int i = 0; i < myIntelligence.size(); i++) {
                 JsonObject m = gson.fromJson(myIntelligence.get(i), JsonObject.class);
@@ -77,10 +76,10 @@ public class MI6Runner {
                     if (!map.containsKey(mission.getTimeIssued())){map.put(mission.getTimeIssued(),new LinkedList<>());}
                     map.get(mission.getTimeIssued()).add(mission);
                 }
-//                put all intelligence in to Arr
+//                put all intelligence in to Arr and enter the map
                 intelligenceArr[i] = new Intelligence(Integer.toString(i),map,latch);
             }
-
+            //crate Threads
             threadsArr = new Thread[numbersOfSubPub];
             for (int i = 0; i < numberOfM; i++) {
                 threadsArr[i]=new Thread(MArr[i]);
@@ -103,6 +102,7 @@ public class MI6Runner {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+//            start timeServices after all SubPubs are started
             threadsArr[threadsArr.length-1].start();
 
 

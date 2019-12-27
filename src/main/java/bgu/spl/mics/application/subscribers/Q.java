@@ -43,6 +43,7 @@ public class Q extends Subscriber {
 				}
 			}
 		});
+		// for counting down to start timeServices
 		latch.countDown();
 	}
 }

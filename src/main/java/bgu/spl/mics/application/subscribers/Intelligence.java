@@ -44,6 +44,7 @@ public class Intelligence extends Subscriber {
 				}
 			}
 		});
+		// for counting down to start timeServices
 		latch.countDown();
 	}
 }
