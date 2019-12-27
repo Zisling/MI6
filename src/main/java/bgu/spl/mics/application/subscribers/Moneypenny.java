@@ -13,6 +13,7 @@ import bgu.spl.mics.application.passiveObjects.Squad;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Only this type of Subscriber can access the squad.
@@ -24,10 +25,12 @@ import java.util.Map;
 public class Moneypenny extends Subscriber {
 	int id;
 	Squad mySquad;
-	public Moneypenny(String name) {
+	CountDownLatch latch;
+	public Moneypenny(String name,CountDownLatch latch) {
 		super(name);
 		id=Integer.parseInt(name);
 		mySquad=Squad.getInstance();
+		this.latch=latch;
 
 	}
 
@@ -83,6 +86,7 @@ public class Moneypenny extends Subscriber {
 				}
 			});
 		}
+		latch.countDown();
 	}
 
 }
