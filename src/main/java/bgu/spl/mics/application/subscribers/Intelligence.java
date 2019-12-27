@@ -48,11 +48,9 @@ public class Intelligence extends Subscriber {
 				if (tick!=-1&&MissionMap.containsKey(tick)){
 					for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
 						MissionInfo toSend = MissionMap.get(tick).poll();
-						try {
-							getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));
-						}catch (NullPointerException e){
-							System.out.println(e.getMessage());
-						}
+						if(toSend!=null&&toSend.getName()!=null){
+						getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));}
+						else {throw new NullPointerException();}
 					}
 				}
 			}
