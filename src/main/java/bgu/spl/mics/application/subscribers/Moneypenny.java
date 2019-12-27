@@ -20,9 +20,9 @@ import java.util.concurrent.CountDownLatch;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Moneypenny extends Subscriber {
-	int id;
-	Squad mySquad;
-	CountDownLatch latch;
+	private int id;
+	private Squad mySquad;
+	private CountDownLatch latch;
 	public Moneypenny(String name,CountDownLatch latch) {
 		super(name);
 		id=Integer.parseInt(name);
@@ -35,50 +35,38 @@ public class Moneypenny extends Subscriber {
 	protected void initialize() {
 
 		if(id!=0){
-		subscribeEvent(AgentAvailableEvent.class, new Callback<AgentAvailableEvent>() {
-			@Override
-			public void call(AgentAvailableEvent c) {
-				if (c!=null){
-					if (mySquad.getAgents(c.getSerialAgentsNumbers())){
-						complete(c,id);
-					}
-					else {
-						complete(c, -1);
-					}
+		subscribeEvent(AgentAvailableEvent.class, c -> {
+			if (c!=null){
+				if (mySquad.getAgents(c.getSerialAgentsNumbers())){
+					complete(c,id);
+				}
+				else {
+					complete(c, -1);
 				}
 			}
 		});
 
 		}
 		if (id==0){
-		subscribeEvent(AbortBroadCast.class, new Callback<AbortBroadCast>() {
-			@Override
-			public void call(AbortBroadCast c) {
-				if (c!=null){
-					mySquad.releaseAgents(c.getAgentToRelease());
-					complete(c, true);
-				}
-				complete(c, false);
+		subscribeEvent(AbortBroadCast.class, c -> {
+			if (c!=null){
+				mySquad.releaseAgents(c.getAgentToRelease());
+				complete(c, true);
 			}
+			complete(c, false);
 		});
-			subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
-				@Override
-				public void call(TickBroadcast c) {
-					if (c.getTick()==-1){
-						Map<String, Agent> goHome=mySquad.getAgentsMap();
-						for (Agent value : goHome.values()) {
-							value.release();
-						}
+			subscribeBroadcast(TickBroadcast.class, c -> {
+				if (c.getTick()==-1){
+					Map<String, Agent> goHome=mySquad.getAgentsMap();
+					for (Agent value : goHome.values()) {
+						value.release();
 					}
 				}
 			});
-			subscribeEvent(ReadyEvent.class, new Callback<ReadyEvent>() {
-				@Override
-				public void call(ReadyEvent c) {
-					if (c!=null){
-						mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
-						complete(c, mySquad.getAgentsNames(c.getSerialAgentsNumbers()));
-					}
+			subscribeEvent(ReadyEvent.class, c -> {
+				if (c!=null){
+					mySquad.sendAgents(c.getSerialAgentsNumbers(), c.getDuration());
+					complete(c, mySquad.getAgentsNames(c.getSerialAgentsNumbers()));
 				}
 			});
 		}
