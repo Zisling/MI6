@@ -12,6 +12,7 @@ import bgu.spl.mics.application.subscribers.Q;
  * Write your implementation here!
  * Only private fields and methods can be added to this class.
  */
+
 public class MessageBrokerImpl implements MessageBroker {
 	private ConcurrentHashMap<Class<? extends Event<?>>, ConcurrentLinkedQueue<Subscriber>> eventMap;
 	private ConcurrentHashMap<Class<? extends Broadcast>, ConcurrentLinkedQueue<Subscriber>> broadcastMap;
@@ -118,7 +119,7 @@ public class MessageBrokerImpl implements MessageBroker {
 				}
 				synchronized (currSub){
 				currSub.notifyAll();}
-			}catch (Exception m){m.getMessage();}
+			}catch (Exception m){m.printStackTrace();}
 		}
 			else {
 				if (e.getClass()==GadgetAvailableEvent.class){
@@ -165,12 +166,24 @@ public class MessageBrokerImpl implements MessageBroker {
 		}
 	}
 
+
+	/**
+	 * Removes the specified Subscriber from the eventMaps' events queue of subscribers
+	 * @param eventClass-represents the event's class/type
+	 * @param subToUnregister-Subscriber we want to remove from the specific queue of event in the eventMap
+	 */
 	private void unSubscribeFromEvents(Class eventClass,Subscriber subToUnregister)
 	{
 		synchronized (eventMap.get(eventClass)){
 			eventMap.get(eventClass).remove(subToUnregister);
 		}
 	}
+
+	/**
+	 * Removes the specified Subscriber from the broadcastMaps' broadcasts queue of subscribers
+	 * @param broadClass-represents the broadcast's class/type
+	 * @param subToUnregister-Subscriber we want to remove from the specific queue of broadcast in the broadcastMap
+	 */
 	private void unsubscribeFromBroadcasts(Class broadClass,Subscriber subToUnregister)
 	{
 		synchronized (broadcastMap.get(broadClass))
@@ -178,6 +191,7 @@ public class MessageBrokerImpl implements MessageBroker {
 			broadcastMap.get(broadClass).remove(subToUnregister);
 		}
 	}
+
 
 	@Override
 	public Message awaitMessage(Subscriber m) throws InterruptedException {

@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Q extends Subscriber {
-	Inventory myInventory;
-	AtomicInteger tick;
+	private Inventory myInventory;
+	private AtomicInteger tick;
 	private CountDownLatch latch;
 	public Q(String name,CountDownLatch latch) {
 		super(name);
@@ -30,26 +30,21 @@ public class Q extends Subscriber {
 	@Override
 	protected void initialize() {
 
-		subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
-			@Override
-			public void call(TickBroadcast c) {
-				if (c!=null){
-					tick=c.getTimeTick();
+		subscribeBroadcast(TickBroadcast.class, c -> {
+			if (c!=null){
+				tick=c.getTimeTick();
+			}
+		});
+		subscribeEvent(GadgetAvailableEvent.class, c -> {
+			if (c != null) {
+				int receiveTime = tick.get();
+				if (myInventory.getItem(c.getGadget())) {
+					complete(c, receiveTime);
+				} else {
+					complete(c, -1);
 				}
 			}
 		});
-		subscribeEvent(GadgetAvailableEvent.class, new Callback<GadgetAvailableEvent>() {
-			@Override
-			public void call(GadgetAvailableEvent c) {
-				if (c != null) {
-					int receiveTime = tick.get();
-					if (myInventory.getItem(c.getGadget())) {
-						complete(c, receiveTime);
-					} else {
-						complete(c, -1);
-					}
-				}
-			}});
 		latch.countDown();
 	}
 }

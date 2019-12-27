@@ -39,7 +39,7 @@ public class M extends Subscriber {
 	 * @param missionName MoneyPenny Id , SerialNumbers of agents, AgentsNames , gadget Name , timeIssued , Qtime , and duration for time crated
 	 * @return Report
 	 **/
-	public Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime,int duration){
+	private Report createReport(String missionName,int MoneyPenny,List<String> SerialNumber, List<String> AgentsNames,String gadgetName,int timeIssued,int QTime,int duration){
 		Report out = new Report();
 		out.setMissionName(missionName);
 		out.setM(id);
@@ -57,7 +57,7 @@ public class M extends Subscriber {
 	 * add Report to the doc to myDiary
 	 * @param toDoc at myDiary
 	 * */
-	public void docReport(Report toDoc){
+	private void docReport(Report toDoc){
 		myDiary.addReport(toDoc);
 	}
 	/**
@@ -68,7 +68,7 @@ public class M extends Subscriber {
 	 * @param SerialAgentsNumbers is a List of Agents to release
 	* */
 
-	public void missionAbort(List<String> SerialAgentsNumbers){
+	private void missionAbort(List<String> SerialAgentsNumbers){
 		getSimplePublisher().sendEvent(new ReadyEvent(0,SerialAgentsNumbers));
 	}
 
@@ -93,45 +93,39 @@ public class M extends Subscriber {
 	@Override
 	protected void initialize() {
 
-		subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
-			@Override
-			public void call(TickBroadcast c) {
-				if (c!=null){
-					tick=c.getTimeTick();
-				}
+		subscribeBroadcast(TickBroadcast.class, c -> {
+			if (c!=null){
+				tick=c.getTimeTick();
 			}
 		});
-		subscribeEvent(MissionReceviedEvent.class, new Callback<MissionReceviedEvent>() {
-			@Override
-			public void call(MissionReceviedEvent c) {
-				myDiary.incrementTotal();
-				int startTick = tick.get();
-					System.out.println(c.getMission().getName() + " " + c.getMission().getGadget() + " " + getName());
-					Future<Integer> MoneyPennyId = null;
-					Future<Integer> QTimeTick = null;
-					Future<List<String>> AgentsNames = null;
-					complete(c, null);
-					MissionInfo mission = c.getMission();
-					if (isTimeExpired(mission.getTimeExpired(),startTick+mission.getDuration()) && timeCheck()) {
-						MoneyPennyId = getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
-						if (MoneyPennyId != null && MoneyPennyId.get()!=null&&MoneyPennyId.get() != -1 && MoneyPennyId.isDone() && timeCheck()) {
-							QTimeTick = getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
-							if (QTimeTick != null && QTimeTick.get() != -1 & isTimeExpired(mission.getTimeExpired(),QTimeTick.get()+mission.getDuration())& timeCheck()) {
-								AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
-								if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
-									System.out.println("look at me " + AgentsNames.get() + " " + tick.get() + " M" + getName());
-									docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get(),mission.getDuration()));
-								} else {
-									missionAbort(mission.getSerialAgentsNumbers());
-								}
+		subscribeEvent(MissionReceviedEvent.class, c -> {
+			myDiary.incrementTotal();
+			int startTick = tick.get();
+				System.out.println(c.getMission().getName() + " " + c.getMission().getGadget() + " " + getName());
+				Future<Integer> MoneyPennyId;
+				Future<Integer> QTimeTick;
+				Future<List<String>> AgentsNames;
+				complete(c, null);
+				MissionInfo mission = c.getMission();
+				if (isTimeExpired(mission.getTimeExpired(),startTick+mission.getDuration()) && timeCheck()) {
+					MoneyPennyId = getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
+					if (MoneyPennyId != null && MoneyPennyId.get()!=null&&MoneyPennyId.get() != -1 && MoneyPennyId.isDone() && timeCheck()) {
+						QTimeTick = getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
+						if (QTimeTick != null && QTimeTick.get() != -1 & isTimeExpired(mission.getTimeExpired(),QTimeTick.get()+mission.getDuration())& timeCheck()) {
+							AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
+							if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
+								System.out.println("look at me " + AgentsNames.get() + " " + tick.get() + " M" + getName());
+								docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get(),mission.getDuration()));
 							} else {
 								missionAbort(mission.getSerialAgentsNumbers());
 							}
-						} else if (MoneyPennyId != null && MoneyPennyId.get() != -1) {
+						} else {
 							missionAbort(mission.getSerialAgentsNumbers());
 						}
+					} else if (MoneyPennyId != null && MoneyPennyId.get() != -1) {
+						missionAbort(mission.getSerialAgentsNumbers());
 					}
-			}
+				}
 		});
 
 		latch.countDown();

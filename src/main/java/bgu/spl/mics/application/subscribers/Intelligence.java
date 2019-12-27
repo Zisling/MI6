@@ -35,17 +35,13 @@ public class Intelligence extends Subscriber {
 	@Override
 	protected void initialize() {
 
-		subscribeBroadcast(TickBroadcast.class, new Callback<TickBroadcast>() {
-			@Override
-			public void call(TickBroadcast c) {
-				Future<?> a= null;
-				if (c!=null){
-					int tick = c.getTick();
-					if (tick!=-1&&MissionMap.containsKey(tick)){
-						for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
-							MissionInfo toSend = MissionMap.get(tick).poll();
-							a=getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));
-						}
+		subscribeBroadcast(TickBroadcast.class, c -> {
+			if (c!=null){
+				int tick = c.getTick();
+				if (tick!=-1&&MissionMap.containsKey(tick)){
+					for (int i = 0; i <MissionMap.get(tick).size() ; i++) {
+						MissionInfo toSend = MissionMap.get(tick).poll();
+						getSimplePublisher().sendEvent(new MissionReceviedEvent(toSend.getName(),toSend));
 					}
 				}
 			}
