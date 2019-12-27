@@ -6,7 +6,7 @@ import java.util.List;
 
 
 /**
- * ReadyEvent-Send agents to the mission
+ * ReadyEvent-Event that specifies Sending Agents on a mission , sent by M to Money penny through the MessageBroker to start a Mission.
  */
 
 public class ReadyEvent implements Event<List<String>> {
