@@ -105,26 +105,29 @@ public class M extends Subscriber {
 				Future<List<String>> AgentsNames;
 				complete(c, null);
 				MissionInfo mission = c.getMission();
-				if (isTimeExpired(mission.getTimeExpired(),startTick+mission.getDuration()) && timeCheck()) {
+				if (isTimeExpired(mission.getTimeExpired(),startTick+mission.getDuration()) && timeCheck()) { //see if can M start presses the Mission
 					MoneyPennyId = getSimplePublisher().sendEvent(new AgentAvailableEvent(c.getMission().getSerialAgentsNumbers()));
-					if (MoneyPennyId != null && MoneyPennyId.get()!=null&&MoneyPennyId.get() != -1 && MoneyPennyId.isDone() && timeCheck()) {
+					if (MoneyPennyId != null && MoneyPennyId.get()!=null&&MoneyPennyId.get() != -1 && MoneyPennyId.isDone() && timeCheck()) { // see if the agent are available
 						QTimeTick = getSimplePublisher().sendEvent(new GadgetAvailableEvent(c.getMission().getGadget()));
+						// see if gadget is available and three is still time to execute the mission
 						if (QTimeTick != null && QTimeTick.get() != -1 & isTimeExpired(mission.getTimeExpired(),QTimeTick.get()+mission.getDuration())& timeCheck()) {
+							//send the mission and wait to report it
 							AgentsNames = getSimplePublisher().sendEvent(new ReadyEvent(mission.getDuration(), mission.getSerialAgentsNumbers()));
-							if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {
+							if (AgentsNames != null && AgentsNames.get() != null && AgentsNames.isDone()) {//wait for the report after the mission is done
 								docReport(createReport(c.getMissionName(), MoneyPennyId.get(), mission.getSerialAgentsNumbers(), AgentsNames.get(), mission.getGadget(), mission.getTimeIssued(), QTimeTick.get(),mission.getDuration()));
-							} else {
+							} else {// in case that the mission is needed to abort send a massage to Abort and the agent are released
 								missionAbort(mission.getSerialAgentsNumbers());
 							}
-						} else {
+						} else {// in case that the mission is needed to abort send a massage to Abort and the agent are released
 							missionAbort(mission.getSerialAgentsNumbers());
 						}
-					} else if (MoneyPennyId != null && MoneyPennyId.get() != -1) {
+					} else if (MoneyPennyId != null && MoneyPennyId.get() != -1) {//see if agent were acquired for the mission if yes release them for other Missions
+						// in case that the mission is needed to abort send a massage to Abort and the agent are released
 						missionAbort(mission.getSerialAgentsNumbers());
 					}
 				}
 		});
-
+// for counting down to start timeServices
 		latch.countDown();
 	}
 
