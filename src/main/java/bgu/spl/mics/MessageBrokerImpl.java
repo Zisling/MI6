@@ -54,48 +54,38 @@ public class MessageBrokerImpl implements MessageBroker {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, Subscriber m){
-		if(!eventMap.containsKey(type)) {
 			try {
 				EventSem.acquire();
 				if(!eventMap.containsKey(type)) {
-					System.out.println(type+" 675");
 					eventMap.put(type, new ConcurrentLinkedQueue<>());
-					eventMap.get(type).add(m);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				EventSem.release();
+				eventMap.get(type).add(m);
+				System.out.println(type+" 675");
 			}
 		}
-		else
-		{
-			eventMap.get(type).add(m);
-		}
 
-	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, Subscriber m) {
-		if(!broadcastMap.containsKey(type)) {
 			try {
 				BroadSem.acquire();
 				if (!broadcastMap.containsKey(type)) {
-					System.out.println(type+" 645");
 					broadcastMap.put(type, new ConcurrentLinkedQueue<>());
-					broadcastMap.get(type).add(m);
+					System.out.println(type+ " 9999999");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				BroadSem.release();
+				broadcastMap.get(type).add(m);
+				System.out.println(type+" 777");
 			}
 		}
-		else
-		{
-			broadcastMap.get(type).add(m);
-		}
-	}
+
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
